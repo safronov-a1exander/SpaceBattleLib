@@ -74,14 +74,14 @@ public class Vector {
          }
     }
 
-    // public static Vector operator*(int n, Vector x){
-    //     int[] new_array = new int[x.size];
+    public static Vector operator*(int n, Vector x){
+        int[] new_array = new int[x.size];
         
-    //     for (int i = 0; i < x.size; i++){ 
-    //         new_array[i] = n * x[i];
-    //     }
-    //     return new Vector(new_array);
-    // }
+        for (int i = 0; i < x.size; i++){ 
+            new_array[i] = n * x[i];
+        }
+        return new Vector(new_array);
+    }
 
     public static bool operator==(Vector x, Vector y){
         if (x.size != y.size){
