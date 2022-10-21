@@ -160,4 +160,27 @@ public class UnitTest2 {
         var obj2 = new Vector(1, 2);
         Assert.True(obj1 > obj2);
     }
+
+    [Fact]
+    public void PosTest_VectorSubstr(){
+        var obj1 = new Vector(1, 2, 3);
+        var obj2 = new Vector(1, 2, 1);
+        var obj3 = obj1 - obj2;
+        Assert.Equal(new Vector(0, 0, 1), obj3);
+    }
+
+    [Fact]
+    public void NegTest_VectorSubstr1(){
+        var obj1 = new Vector(1, 2);
+        var obj2 = new Vector(1, 2, 1);
+        var act = () => obj1 -= obj2;
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void PosTest_VectorMult(){
+        var obj1 = new Vector(1, 2, 3);
+        var obj2 = 3 * obj1;
+        Assert.Equal(new Vector(3, 6, 9), obj2);
+    }
 }
