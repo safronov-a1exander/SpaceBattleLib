@@ -109,4 +109,32 @@ public class UnitTest2 {
         var obj1 = new Vector(1, 3);
         Assert.IsType<int>(obj1.GetHashCode());
     }
+
+    [Fact]
+    public void PosTest_VectorLess1(){
+        var obj1 = new Vector(1, 2);
+        var obj2 = new Vector(1, 3);
+        Assert.True(obj1 < obj2);
+    }
+
+    [Fact]
+    public void PosTest_VectorLess2(){
+        var obj1 = new Vector(1, 2);
+        var obj2 = new Vector(1, 2, 3);
+        Assert.True(obj1 < obj2);
+    }
+
+    [Fact]
+    public void PosTest_VectorMore1(){
+        var obj1 = new Vector(1, 3);
+        var obj2 = new Vector(1, 2);
+        Assert.True(obj1 > obj2);
+    }
+
+    [Fact]
+    public void PosTest_VectorMore2(){
+        var obj1 = new Vector(1, 2, 3);
+        var obj2 = new Vector(1, 2);
+        Assert.True(obj1 > obj2);
+    }
 }
