@@ -52,10 +52,12 @@ public class UnitTest2 {
         Vector t = new Vector(1, 1);
         Assert.NotNull(t);
     }
+
     [Fact]
     public void NegTest_CreateVec(){
         Assert.Throws<ArgumentException>(() => new Vector());
     }
+    
     [Fact]
     public void Test_VectorToStr(){
         var obj = new Vector(12, 24);
@@ -122,6 +124,27 @@ public class UnitTest2 {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2, 3);
         Assert.True(obj1 < obj2);
+    }
+
+    [Fact]
+    public void NegTest_VectorLess1(){
+        var obj1 = new Vector(1, 2);
+        var obj2 = new Vector(1, 2);
+        Assert.False(obj1 < obj2);
+    }
+
+    [Fact]
+    public void NegTest_VectorLess2(){
+        var obj1 = new Vector(1, 2, 3);
+        var obj2 = new Vector(1, 2);
+        Assert.False(obj1 < obj2);
+    }    
+
+    [Fact]
+    public void NegTest_VectorLess3(){
+        var obj1 = new Vector(2, 2);
+        var obj2 = new Vector(1, 2);
+        Assert.False(obj1 < obj2);
     }
 
     [Fact]
