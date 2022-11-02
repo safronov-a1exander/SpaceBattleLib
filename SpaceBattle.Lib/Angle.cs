@@ -1,48 +1,52 @@
 ﻿namespace SpaceBattle.Lib;
 
-public class Angle
-{
-    public int numerator;
-    public int denominator;
-    private static int GCD(int firstnum, int secondnum)
+public class Angle {
+    public int n;
+    public int m;
+
+    private static int gcd(int x, int y)
     {
-        if (secondnum == 0) return firstnum;
-        return GCD(secondnum,firstnum%secondnum);
-    }
-    public Angle(int numerator, int denominator)
+        return Math.Abs(y) == 0 ? Math.Abs(x) : gcd(Math.Abs(y), Math.Abs(x) % Math.Abs(y));
+    } 
+
+    public Angle(int n, int m)
     {
-        if (denominator == 0) throw new DivideByZeroException();
-        if (denominator < 0)
+        if (m == 0) throw new DivideByZeroException();
+        if (n >=0 && m < 0 || n <= 0 && m < 0)
         {
-            numerator *= -1;
-            denominator *= -1;
+            n *= -1;
+            m *= -1;
         }
-        this.numerator /= GCD(numerator,denominator);
-        this.denominator /=GCD(numerator,denominator);
+        this.n = n/gcd(n, m);
+        this.m = m/gcd(n, m);
     }
+
     public override bool Equals(object? obj)
     {
         return obj is Angle angle &&
-            numerator == angle.numerator &&
-            denominator == angle.denominator;
+               n == angle.n &&
+               m == angle.m;
     }
+
     public override int GetHashCode()
     {
-        return (numerator.ToString()+denominator.ToString()).GetHashCode();
+        return HashCode.Combine(n, m);
     }
-    public static Angle operator + (Angle ang1, Angle ang2)
+
+    public static Angle operator +(Angle a, Angle b)
     {
-        int numerator = ang1.numerator * ang2.denominator + ang2.numerator * ang1.denominator;
-        int denominator = ang1.denominator * ang2.denominator;
-        return new Angle(numerator, denominator);
+        int top = a.n * b.m + b.n * a.m;
+        int bottom = a.m * b.m;
+        return new Angle(top/gcd(top, bottom), bottom/gcd(top, bottom));
     }
-    public static bool operator == (Angle ang1, Angle ang2)
+    public static bool operator==(Angle a, Angle b)
     {
-        if (ang1.numerator == ang2.numerator && ang1.denominator == ang2.denominator) return true;
+        if (a.n == b.n && a.m == b.m) return true;
         return false;
     }
-    public static bool operator != (Angle ang1, Angle ang2)
+    public static bool operator !=(Angle a, Angle b)
     {
-        return !(ang1 == ang2);
+        return !(a==b);
     }
+    
 }
