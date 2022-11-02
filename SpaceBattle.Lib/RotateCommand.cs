@@ -3,7 +3,7 @@ namespace SpaceBattle.Lib;
 public class RotateCommand : ICommand
 {
     IRotatable objToRotate;
-    private RotateCommand(IRotatable obj)
+    public RotateCommand(IRotatable obj)
     {
         objToRotate = obj;
     }
