@@ -5,44 +5,56 @@ using FluentAssertions;
 public class UnitTest1
 {
     [Fact]
-    public void PosTestMove()
+    public void PosTest_Rotate()
     {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3)).Verifiable();
-        var c = new MoveCommand(m.Object);
+        var m = new Mock<IRotatable>();
+        m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
+        m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
+        
+        var c = new RotateCommand(m.Object);
         c.Execute();
-        m.VerifySet(_m => _m.Coords = new Vector(5, 8));
+
+        m.VerifySet(_m => _m.angle = new Angle(135, 1));
     }
+
     [Fact]
-    public void NegTestMove_UnableToGetCoords()
+    public void NegTest_Rotate1()
     {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Throws<NullReferenceException>();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3)).Verifiable();
-        var c = new MoveCommand(m.Object);
+        var m = new Mock<IRotatable>();
+        m.Setup(_m => _m.angle).Throws<NullReferenceException>();
+        m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
+        
+        var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
+
         act.Should().Throw<NullReferenceException>();
     }
+
     [Fact]
-    public void NegTestMove_UnableToGetSpeed()
+    public void NegTest_Rotate2()
     {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Throws<NullReferenceException>();
-        var c = new MoveCommand(m.Object);
+        var m = new Mock<IRotatable>();
+        m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
+        m.Setup(_m => _m.angleVelocity).Throws<NullReferenceException>();
+        
+        var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
+
         act.Should().Throw<NullReferenceException>();
     }
+
     [Fact]
-    public void NegTestMove_UnableToAdd()
+    public void NegTest_Rotate3()
     {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3, 1)).Verifiable();
-        var c = new MoveCommand(m.Object);
+        var m = new Mock<IRotatable>();
+        m.SetupProperty(_m => _m.angle, new Angle(45, 1));
+        m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
+        m.SetupGet(_m => _m.angle).Throws<ArithmeticException>();
+        
+        var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
-        act.Should().Throw<ArgumentException>();
+
+        act.Should().Throw<ArithmeticException>();
     }
 }
 
