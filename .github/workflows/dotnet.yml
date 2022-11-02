@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "main", "move" ]
+    branches: [ "main", "rotate" ]
   pull_request:
-    branches: [ "main", "move" ]
+    branches: [ "main", "rotate" ]
 
 jobs:
   build:
