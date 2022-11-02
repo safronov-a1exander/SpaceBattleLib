@@ -9,6 +9,6 @@ public class RotateCommand : ICommand
     }
     public void Execute()
     {
-        this.objToRotate.CurrentAngle += this.objToRotate.AngleVelocity;
+        this.objToRotate.angle += this.objToRotate.angleVelocity;
     }
 }

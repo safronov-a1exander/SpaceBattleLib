@@ -2,6 +2,6 @@
 
 public interface IRotatable
 {
-    public Angle CurrentAngle { get; set; }
-    public Angle AngleVelocity { get; }
+    public Angle angle { get; set; }
+    public Angle angleVelocity { get; }
 }
