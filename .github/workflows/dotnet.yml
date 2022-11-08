@@ -1,10 +1,15 @@
 name: .NET
 
 on:
-  push:
-    branches: [ "main", "rotate" ]
+  workflow_dispatch:
+    inputs:
+      SpaceWorkflow:
+        description: 'SpaceWorkflow'     
+        required: true
+        default: 'warning'
+
   pull_request:
-    branches: [ "main", "rotate" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -28,3 +33,9 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: SpaceBattle.Lib.Test/TestResults/coverage.info
+        
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "SpaceWorkflow: ${{ github.event.inputs.SpaceWorkflow }}"
