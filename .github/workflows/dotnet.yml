@@ -8,8 +8,8 @@ on:
         required: true
         default: 'Manual run'
 
-  pull_request:
-    branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
 
 jobs:
   build:
