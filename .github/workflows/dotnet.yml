@@ -3,10 +3,10 @@ name: .NET
 on:
   workflow_dispatch:
     inputs:
-      SpaceWorkflow:
-        description: 'SpaceWorkflow'     
+      reason:
+        description: 'The reason for running the workflow'
         required: true
-        default: 'warning'
+        default: 'Manual run'
 
   pull_request:
     branches: [ "main" ]
@@ -18,7 +18,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: echo "SpaceWorkflow: ${{ github.event.inputs.SpaceWorkflow }}"
+    - name: 'Print manual run reason'
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        echo 'Reason: ${{ github.event.inputs.reason }}'
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
