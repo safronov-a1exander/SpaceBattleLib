@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: |
+        echo "SpaceWorkflow: ${{ github.event.inputs.SpaceWorkflow }}"
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -33,9 +35,4 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: SpaceBattle.Lib.Test/TestResults/coverage.info
-        
-  printInputs:
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo "SpaceWorkflow: ${{ github.event.inputs.SpaceWorkflow }}"
+    
