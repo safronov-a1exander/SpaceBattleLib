@@ -3,13 +3,14 @@ name: .NET
 on:
   workflow_dispatch:
     inputs:
-      SpaceWorkflow:
-        description: 'SpaceWorkflow'     
+      reason:
+        description: 'The reason for running the workflow'
         required: true
-        default: 'warning'
+        default: 'Manual run'
 
-  pull_request:
-    branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
+
 
 jobs:
   build:
