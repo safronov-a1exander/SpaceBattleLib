@@ -11,16 +11,17 @@ on:
   #pull_request:
     #branches: [ "main" ]
 
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - run: |
-        echo "SpaceWorkflow: ${{ github.event.inputs.SpaceWorkflow }}"
     - uses: actions/checkout@v3
+    - name: 'Print manual run reason'
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        echo 'Reason: ${{ github.event.inputs.reason }}'
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
