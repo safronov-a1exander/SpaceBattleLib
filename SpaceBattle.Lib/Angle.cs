@@ -17,14 +17,9 @@ public class Angle {
             n *= -1;
             m *= -1;
         }
-        int gcd = gcd(n, m);
-        this.n = n/gcd;
-        this.m = m/gcd;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return (obj == angle);
+        int gcd_temp = gcd(n, m);
+        this.n = n/gcd_temp;
+        this.m = m/gcd_temp;
     }
 
     public override int GetHashCode()
