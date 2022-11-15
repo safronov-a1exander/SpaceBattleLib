@@ -17,15 +17,14 @@ public class Angle {
             n *= -1;
             m *= -1;
         }
-        this.n = n/gcd(n, m);
-        this.m = m/gcd(n, m);
+        int gcd = gcd(n, m);
+        this.n = n/gcd;
+        this.m = m/gcd;
     }
 
     public override bool Equals(object? obj)
     {
-        return obj is Angle angle &&
-               n == angle.n &&
-               m == angle.m;
+        return (obj == angle);
     }
 
     public override int GetHashCode()
@@ -37,12 +36,12 @@ public class Angle {
     {
         int top = a.n * b.m + b.n * a.m;
         int bottom = a.m * b.m;
-        return new Angle(top/gcd(top, bottom), bottom/gcd(top, bottom));
+        int tbgcd = gcd(top, bottom);
+        return new Angle(top/tbgcd, bottom/tbgcd);
     }
     public static bool operator==(Angle a, Angle b)
     {
-        if (a.n == b.n && a.m == b.m) return true;
-        return false;
+        return (a.n == b.n && a.m == b.m);
     }
     public static bool operator !=(Angle a, Angle b)
     {
