@@ -42,5 +42,5 @@ public class Angle {
     {
         return !(a==b);
     }
-    
+    public override bool Equals(object? obj) => obj is Angle a && n == a.n && m == a.m;
 }
