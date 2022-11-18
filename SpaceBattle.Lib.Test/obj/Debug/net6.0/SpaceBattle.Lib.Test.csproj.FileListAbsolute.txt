@@ -1,0 +1,5 @@
+c:\OmSTU\C#\SpaceBattle.Lib.Test\obj\Debug\net6.0\SpaceBattle.Lib.Test.csproj.AssemblyReference.cache
+c:\OmSTU\C#\SpaceBattle.Lib.Test\obj\Debug\net6.0\SpaceBattle.Lib.Test.GeneratedMSBuildEditorConfig.editorconfig
+c:\OmSTU\C#\SpaceBattle.Lib.Test\obj\Debug\net6.0\SpaceBattle.Lib.Test.AssemblyInfoInputs.cache
+c:\OmSTU\C#\SpaceBattle.Lib.Test\obj\Debug\net6.0\SpaceBattle.Lib.Test.AssemblyInfo.cs
+c:\OmSTU\C#\SpaceBattle.Lib.Test\obj\Debug\net6.0\SpaceBattle.Lib.Test.csproj.CoreCompileInputs.cache
