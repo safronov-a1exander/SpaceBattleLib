@@ -2,10 +2,10 @@ namespace SpaceBattle.Lib.Test;
 using Moq;
 using FluentAssertions;
 
-public class RotateUnitTest1
+public class RotateCommandUnitTest1
 {
     [Fact]
-    public void PosTest_Rotate()
+    public void Pos_Rotate()
     {
         var m = new Mock<IRotatable>();
         m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
@@ -18,11 +18,11 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void NegTest_RotateCommandSetAngleException1()
+    public void Neg_RotateCommandSetAngleException1()
     {
         var m = new Mock<IRotatable>();
-        m.Setup(_m => _m.angle).Throws<NullReferenceException>();
-        m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
+        m.SetupProperty(_m => _m.angle, new Angle(45, 1)).Throws<NullReferenceException>();
+        m.SetupGet(_m => _m.angleVelocity).Returns(new Angle(90, 1));
         
         var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
@@ -31,10 +31,10 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void NegTest_RotateCommandSetVelocityException2()
+    public void Neg_RotateCommandSetVelocityException2()
     {
         var m = new Mock<IRotatable>();
-        m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
+        m.SetupGet(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
         m.Setup(_m => _m.angleVelocity).Throws<NullReferenceException>();
         
         var c = new RotateCommand(m.Object);
@@ -44,7 +44,7 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void NegTest_RotateCommandArithmeticException3()
+    public void Neg_RotateCommandArithmeticException3()
     {
         var m = new Mock<IRotatable>();
         m.SetupProperty(_m => _m.angle, new Angle(45, 1));
