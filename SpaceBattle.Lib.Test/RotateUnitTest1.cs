@@ -18,7 +18,7 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void RotateCommandSetAngleExceptionNegative1()
+    public void NegTest_RotateCommandSetAngleException1()
     {
         var m = new Mock<IRotatable>();
         m.Setup(_m => _m.angle).Throws<NullReferenceException>();
@@ -31,7 +31,7 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void RotateCommandSetAngleExceptionNegative2()
+    public void NegTest_RotateCommandSetVelocityException2()
     {
         var m = new Mock<IRotatable>();
         m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
@@ -44,7 +44,7 @@ public class RotateUnitTest1
     }
 
     [Fact]
-    public void RotateCommandSetAngleExceptionNegative3()
+    public void NegTest_RotateCommandArithmeticException3()
     {
         var m = new Mock<IRotatable>();
         m.SetupProperty(_m => _m.angle, new Angle(45, 1));
