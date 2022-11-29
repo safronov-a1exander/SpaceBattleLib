@@ -8,8 +8,8 @@ public class RotateCommandUnitTest1
     public void Pos_Rotate()
     {
         var m = new Mock<IRotatable>();
-        m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
-        m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
+        m.SetupProperty(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
+        m.SetupGet(_m => _m.angleVelocity).Returns(new Angle(90, 1));
         
         var c = new RotateCommand(m.Object);
         c.Execute();
