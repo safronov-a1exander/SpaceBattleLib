@@ -24,7 +24,7 @@ public class AngleTest {
     }
 
     [Fact]
-    public void NegTestAngle_CheckEquals()
+    public void PosTestAngle_CheckEquals()
     {
         Angle a = new Angle(-30, -1);
         int b = 1;
