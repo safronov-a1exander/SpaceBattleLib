@@ -1,168 +1,142 @@
 namespace SpaceBattle.Lib.Test;
-using Moq;
 using FluentAssertions;
 
-public class UnitTest1
+public class VectorTest
 {
     [Fact]
-    public void PosTestMove()
+    public void PosTestVec_Create()
     {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3)).Verifiable();
-        var c = new MoveCommand(m.Object);
-        c.Execute();
-        m.VerifySet(_m => _m.Coords = new Vector(5, 8));
-    }
-    [Fact]
-    public void NegTestMove_UnableToGetCoords()
-    {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Throws<NullReferenceException>();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3)).Verifiable();
-        var c = new MoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<NullReferenceException>();
-    }
-    [Fact]
-    public void NegTestMove_UnableToGetSpeed()
-    {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Throws<NullReferenceException>();
-        var c = new MoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<NullReferenceException>();
-    }
-    [Fact]
-    public void NegTestMove_UnableToAdd()
-    {
-        var m = new Mock<IMovable>();
-        m.Setup(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.Setup(_m => _m.Speed).Returns(new Vector(-7, 3, 1)).Verifiable();
-        var c = new MoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<ArgumentException>();
-    }
-}
-
-public class UnitTest2 {
-    [Fact]
-    public void PosTest_CreateVec(){
         Vector t = new Vector(1, 1);
         Assert.NotNull(t);
     }
 
     [Fact]
-    public void NegTest_CreateVec(){
+    public void NegTestVec_Create()
+    {
         Assert.Throws<ArgumentException>(() => new Vector());
     }
-    
+
     [Fact]
-    public void Test_VectorToStr(){
+    public void PosTestVec_ToStr()
+    {
         var obj = new Vector(12, 24);
         Assert.Equal("Vector (12, 24)", obj.ToString());
     }
 
     [Fact]
-    public void PosTest_VectorInd(){
+    public void PosTestVec_Ind()
+    {
         var obj = new Vector(1, 2);
         obj[1] += obj[0];
         Assert.Equal(new Vector(1, 3), obj);
     }
 
     [Fact]
-    public void NegTest_VectorInd(){
+    public void NegTestVec_Ind()
+    {
         var obj = new Vector(1, 2);
         var act = () => obj[1] += obj[2];
         act.Should().Throw<IndexOutOfRangeException>();
     }
 
     [Fact]
-    public void PosTest_VectorEq(){
+    public void PosTestVec_Eq()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2);
         Assert.True(obj1 == obj2);
     }
 
     [Fact]
-    public void NegTest_VectorEq1(){
+    public void NegTestVec_Eq1()
+    {
         var obj1 = new Vector(1, 3);
         var obj2 = new Vector(1, 2);
         Assert.True(obj1 != obj2);
     }
 
     [Fact]
-    public void NegTest_VectorEq2(){
+    public void NegTestVec_Eq2()
+    {
         var obj1 = new Vector(1, 3, 4);
         var obj2 = new Vector(1, 2);
         Assert.False(obj1 == obj2);
     }
 
     [Fact]
-    public void NegTest_VectorEq3(){
+    public void NegTestVec_Eq3()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2);
         Assert.False(obj1 != obj2);
     }
 
     [Fact]
-    public void Test_VectorHash(){
+    public void PosTestVec_Hash()
+    {
         var obj1 = new Vector(1, 3);
         Assert.IsType<int>(obj1.GetHashCode());
     }
 
     [Fact]
-    public void PosTest_VectorLess1(){
+    public void PosTestVec_Less1()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 3);
         Assert.True(obj1 < obj2);
     }
 
     [Fact]
-    public void PosTest_VectorLess2(){
+    public void PosTestVec_Less2()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2, 3);
         Assert.True(obj1 < obj2);
     }
 
     [Fact]
-    public void NegTest_VectorLess1(){
+    public void NegTestVec_Less1()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2);
         Assert.False(obj1 < obj2);
     }
 
     [Fact]
-    public void NegTest_VectorLess2(){
+    public void NegTestVec_Less2()
+    {
         var obj1 = new Vector(1, 2, 3);
         var obj2 = new Vector(1, 2);
         Assert.False(obj1 < obj2);
-    }    
+    }
 
     [Fact]
-    public void NegTest_VectorLess3(){
+    public void NegTestVec_Less3()
+    {
         var obj1 = new Vector(2, 2);
         var obj2 = new Vector(1, 2);
         Assert.False(obj1 < obj2);
     }
 
     [Fact]
-    public void PosTest_VectorMore1(){
+    public void PosTestVec_More1()
+    {
         var obj1 = new Vector(1, 3);
         var obj2 = new Vector(1, 2);
         Assert.True(obj1 > obj2);
     }
 
     [Fact]
-    public void PosTest_VectorMore2(){
+    public void PosTestVec_More2()
+    {
         var obj1 = new Vector(1, 2, 3);
         var obj2 = new Vector(1, 2);
         Assert.True(obj1 > obj2);
     }
 
     [Fact]
-    public void PosTest_VectorSubstr(){
+    public void PosTestVec_Substr()
+    {
         var obj1 = new Vector(1, 2, 3);
         var obj2 = new Vector(1, 2, 1);
         var obj3 = obj1 - obj2;
@@ -170,7 +144,8 @@ public class UnitTest2 {
     }
 
     [Fact]
-    public void NegTest_VectorSubstr1(){
+    public void NegTestVec_Substr()
+    {
         var obj1 = new Vector(1, 2);
         var obj2 = new Vector(1, 2, 1);
         var act = () => obj1 -= obj2;
@@ -178,7 +153,8 @@ public class UnitTest2 {
     }
 
     [Fact]
-    public void PosTest_VectorMult(){
+    public void PosTestVec_Mult()
+    {
         var obj1 = new Vector(1, 2, 3);
         var obj2 = 3 * obj1;
         Assert.Equal(new Vector(3, 6, 9), obj2);
