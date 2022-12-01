@@ -5,12 +5,12 @@ using FluentAssertions;
 public class RotateCommandTest
 {
     [Fact]
-    public void Pos_Rotate()
+    public void PosTestRotate()
     {
         var m = new Mock<IRotatable>();
         m.Setup(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
         m.Setup(_m => _m.angleVelocity).Returns(new Angle(90, 1));
-        
+
         var c = new RotateCommand(m.Object);
         c.Execute();
 
@@ -18,42 +18,43 @@ public class RotateCommandTest
     }
 
     [Fact]
-    public void Neg_RotateCommandSetAngleException()
+    public void NegTestRotate_UnableToGetAngle()
     {
         var m = new Mock<IRotatable>();
-        m.SetupGet(_m => _m.angle).Throws<NullReferenceException>();
+        m.SetupGet(_m => _m.angle).Throws<Exception>();
         m.SetupGet(_m => _m.angleVelocity).Returns(new Angle(90, 1));
         
         var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
 
-        act.Should().Throw<NullReferenceException>();
+        act.Should().Throw<Exception>();
     }
 
     [Fact]
-    public void Neg_RotateCommandSetVelocityException()
+    public void NegTestRotate_UnableToGetVelocity()
     {
         var m = new Mock<IRotatable>();
         m.SetupGet(_m => _m.angle).Returns(new Angle(45, 1)).Verifiable();
-        m.SetupGet(_m => _m.angleVelocity).Throws<NullReferenceException>();
-        
+        m.SetupGet(_m => _m.angleVelocity).Throws<Exception>();
+
+
         var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
 
-        act.Should().Throw<NullReferenceException>();
+        act.Should().Throw<Exception>();
     }
 
     [Fact]
-    public void Neg_RotateCommandArithmeticException()
+    public void NegTestRotate_UnableToSetAngle()
     {
         var m = new Mock<IRotatable>();
         m.SetupProperty(_m => _m.angle, new Angle(45, 1));
         m.SetupGet(_m => _m.angleVelocity).Returns(new Angle(90, 1));
-        m.SetupGet(_m => _m.angle).Throws<ArithmeticException>();
+        m.SetupSet(_m => _m.angle = It.IsAny<Angle>()).Throws<Exception>();
         
         var c = new RotateCommand(m.Object);
         var act = () => c.Execute();
 
-        act.Should().Throw<ArithmeticException>();
+        act.Should().Throw<Exception>();
     }
 }
