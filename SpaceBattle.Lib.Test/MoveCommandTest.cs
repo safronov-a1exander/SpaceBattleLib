@@ -2,7 +2,7 @@ namespace SpaceBattle.Lib.Test;
 using Moq;
 using FluentAssertions;
 
-public class MoveTest1
+public class MoveCommandTest
 {
     [Fact]
     public void PosTestMove()
