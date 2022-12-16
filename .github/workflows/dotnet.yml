@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
       - name: Test
-        run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/
+        run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@master
         with:
