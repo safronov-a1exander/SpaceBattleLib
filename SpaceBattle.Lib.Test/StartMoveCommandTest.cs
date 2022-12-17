@@ -1,7 +1,9 @@
-namespace SpaceBattle.Lib.Test;
+using Hwdtech;
 using Hwdtech.Ioc;
 using Moq;
 using FluentAssertions;
+
+namespace SpaceBattle.Lib.Test;
 
 public class StartMoveCommandTest
 {
@@ -9,14 +11,14 @@ public class StartMoveCommandTest
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
 
-        Hwdtech.IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", Hwdtech.IoC.Resolve<object>("Scopes.New", Hwdtech.IoC.Resolve<object>("Scopes.Root"))).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
         
         var mockCommand = new Mock<ICommand>();
         mockCommand.Setup(x => x.Execute());
 
-        Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Adapter.Movable", (object[] args) => new Mock<ICommand>().Object).Execute();
-        Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Command.Move", (object[] args) => new Mock<ICommand>().Object).Execute();
-        Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Operation.Queue.Push", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Adapter.Movable", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Command.Move", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Operation.Queue.Push", (object[] args) => new Mock<ICommand>().Object).Execute();
     }
 
     [Fact]
