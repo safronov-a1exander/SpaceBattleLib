@@ -1,5 +1,4 @@
 using Hwdtech;
-using Hwdtech.Ioc;
 
 namespace SpaceBattle.Lib;
 
@@ -17,6 +16,6 @@ public class StartMoveCommand : ICommand
         installator.action.ToList().ForEach(o => IoC.Resolve<ICommand>("General.SetProperty", installator.UObject, o.Key, o.Value).Execute());
         ICommand MCommand = IoC.Resolve<ICommand>("Command.Move", installator.UObject);
         IoC.Resolve<ICommand>("General.SetProperty", installator.UObject, "Commands.Movement", MCommand).Execute();
-        IoC.Resolve<ICommand>("Queue.Push", IoC.Resolve<Queue<ICommand>>("Queue.Main"), MCommand).Execute();
+        IoC.Resolve<ICommand>("Queue.Push", MCommand).Execute();
     }
 }
