@@ -25,14 +25,16 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-      - name: Restore dependencies
+      - name: Get dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --configuration Release --no-restore
+      - name: Setup cov env
+        run: dotnet tool install --global dotnet-coverage
       - name: Test
-        run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-      - name: Publish coverage report to coveralls.io
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: SpaceBattle.Lib.Test/TestResults/coverage/lcov.info
+        run: dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+      - name: Codecov
+        uses: codecov/codecov-action@v3
+        with: 
+          token: ${{ secrets.CODECOV_TOKEN }}
+          
