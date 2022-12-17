@@ -7,7 +7,7 @@ namespace SpaceBattle.Lib.Test;
 
 public class StartMoveCommandTest
 {
-    static void StartMoveCommandTests()
+    public StartMoveCommandTest()
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
 
