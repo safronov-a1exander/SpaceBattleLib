@@ -4,7 +4,7 @@ public interface IMoveCommandStartable
 {
     IUObject UObject { get; }
 
-    IList<int> Speed { get; }
+    Vector Speed { get; }
 
     IQueue<ICommand> Queue { get; }
 }
