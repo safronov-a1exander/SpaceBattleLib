@@ -15,6 +15,6 @@ public class StartMoveCommand : ICommand
     {
         IMovable MAdapter = IoC.Resolve<IMovable>("Adapter.Movable", this.UObject);
         ICommand MCommand = IoC.Resolve<ICommand>("Command.Move", MAdapter);
-        IoC.Resolve<ICommand>("Operation.Queue.Push", MCommand, UObject.Queue);
+        IoC.Resolve<ICommand>("Operation.Queue.Push", MCommand, UObject.Queue).Execute();
     }
 }
