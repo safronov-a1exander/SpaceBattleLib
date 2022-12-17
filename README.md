@@ -1,3 +1,6 @@
+# CollisionCheck
+[![codecov](https://codecov.io/gh/cosmicblack/ooaip/branch/CollisionCheck/graph/badge.svg?token=1X96NIDNVI)](https://codecov.io/gh/cosmicblack/ooaip)
+
 # StartMoveCommand
 [![codecov](https://codecov.io/github/cosmicblack/ooaip/branch/StartMoveCommand/graph/badge.svg?token=1X96NIDNVI)](https://codecov.io/github/cosmicblack/ooaip)
 
