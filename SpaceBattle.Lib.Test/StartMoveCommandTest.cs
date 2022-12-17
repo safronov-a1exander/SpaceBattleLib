@@ -16,9 +16,10 @@ public class StartMoveCommandTest
         var mockCommand = new Mock<ICommand>();
         mockCommand.Setup(x => x.Execute());
 
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Adapter.Movable", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Queue.Main", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "General.SetProperty", (object[] args) => new Mock<ICommand>().Object).Execute();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Command.Move", (object[] args) => new Mock<ICommand>().Object).Execute();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Operation.Queue.Push", (object[] args) => new Mock<ICommand>().Object).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Queue.Push", (object[] args) => new Mock<ICommand>().Object).Execute();
     }
 
     [Fact]
@@ -26,8 +27,7 @@ public class StartMoveCommandTest
     {
         var m = new Mock<IMoveCommandStartable>();
         m.SetupGet(a => a.UObject).Returns(new Mock<IUObject>().Object).Verifiable();
-        m.SetupGet(a => a.Speed).Returns(new Vector(It.IsAny<int>(), It.IsAny<int>())).Verifiable();
-        m.SetupGet(a => a.Queue).Returns(new Mock<IQueue<ICommand>>().Object).Verifiable();
+        m.SetupGet(a => a.action).Returns(new Dictionary<string, object>() { { "speed", new Vector(It.IsAny<int>(), It.IsAny<int>()) } }).Verifiable();
         ICommand startMoveCommand = new StartMoveCommand(m.Object);
         startMoveCommand.Execute();
         m.Verify();
@@ -36,29 +36,18 @@ public class StartMoveCommandTest
     public void NegTestStartMoveCommand_UnableToGetUObject()
     {
         var m = new Mock<IMoveCommandStartable>();
-        m.SetupGet(_m => _m.UObject).Throws<NullReferenceException>();
-        var c = new StartMoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<NullReferenceException>();
+        m.SetupGet(a => a.UObject).Throws<Exception>().Verifiable();
+        m.SetupGet(a => a.action).Returns(new Dictionary<string, object>() { { "speed", new Vector(It.IsAny<int>(), It.IsAny<int>()) } }).Verifiable();
+        ICommand startMoveCommand = new StartMoveCommand(m.Object);
+        Assert.Throws<Exception>(() => startMoveCommand.Execute());
     }
     [Fact]
-    public void NegTestMove_UnableToGetSpeed()
+    public void NegTestStartMoveCommand_UnableToGetSpeed()
     {
-        var m = new Mock<IMovable>();
-        m.SetupGet(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.SetupGet(_m => _m.Speed).Throws<NullReferenceException>();
-        var c = new MoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<NullReferenceException>();
-    }
-    [Fact]
-    public void NegTestMove_UnableToAdd()
-    {
-        var m = new Mock<IMovable>();
-        m.SetupGet(_m => _m.Coords).Returns(new Vector(12, 5)).Verifiable();
-        m.SetupGet(_m => _m.Speed).Returns(new Vector(-7, 3, 1)).Verifiable();
-        var c = new MoveCommand(m.Object);
-        var act = () => c.Execute();
-        act.Should().Throw<ArgumentException>();
+        var m = new Mock<IMoveCommandStartable>();
+        m.SetupGet(a => a.UObject).Returns(new Mock<IUObject>().Object).Verifiable();
+        m.SetupGet(a => a.action).Throws<Exception>().Verifiable();
+        ICommand startMoveCommand = new StartMoveCommand(m.Object);
+        Assert.Throws<Exception>(() => startMoveCommand.Execute());
     }
 }

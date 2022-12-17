@@ -4,7 +4,8 @@ public interface IMoveCommandStartable
 {
     IUObject UObject { get; }
 
-    Vector Speed { get; }
-
-    IQueue<ICommand> Queue { get; }
+    IDictionary<string, object> action
+    {
+        get;
+    }
 }
