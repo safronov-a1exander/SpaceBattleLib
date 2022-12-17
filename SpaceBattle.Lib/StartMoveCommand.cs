@@ -4,17 +4,17 @@ namespace SpaceBattle.Lib;
 
 public class StartMoveCommand : ICommand
 {
-    IMoveCommandStartable Uobject { get; }
+    IMoveCommandStartable UObject { get; }
 
-    public StartMoveCommand(IMoveCommandStartable Uobject)
+    public StartMoveCommand(IMoveCommandStartable UObject)
     {
-        this.Uobject = Uobject;
+        this.UObject = UObject;
     }
 
     public void Execute()
     {
-        IMovable MAdapter = IoC.Resolve<IMovable>("Adapter.Movable", this.Uobject);
+        IMovable MAdapter = IoC.Resolve<IMovable>("Adapter.Movable", this.UObject);
         ICommand MCommand = IoC.Resolve<ICommand>("Command.Move", MAdapter);
-        IoC.Resolve<ICommand>("Operation.Queue.Push", MCommand, Uobject.Queue);
+        IoC.Resolve<ICommand>("Operation.Queue.Push", MCommand, UObject.Queue);
     }
 }
