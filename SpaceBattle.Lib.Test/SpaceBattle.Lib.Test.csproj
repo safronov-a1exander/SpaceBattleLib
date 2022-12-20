@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coveralls.io" Version="1.4.2" />
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="Hwdtech.Core" Version="1.0.0" />
+    <PackageReference Include="Hwdtech.IoC" Version="1.0.0" />
+    <PackageReference Include="Hwdtech.Ioc.ScopeBasedIoCImplementation" Version="1.0.0" />
+    <PackageReference Include="Hwdtech.Ioc.SingleThreadScope" Version="1.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="moq" Version="4.18.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -30,7 +35,5 @@
   <ItemGroup>
     <ProjectReference Include="..\SpaceBattle.Lib\SpaceBattle.Lib.csproj" />
   </ItemGroup>
-
-</Project>
 
 </Project>
