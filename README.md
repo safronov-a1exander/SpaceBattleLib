@@ -1,3 +1,6 @@
+# EndMoveCommand
+[![codecov](https://codecov.io/gh/cosmicblack/ooaip/branch/EndMoveCommand/graph/badge.svg?token=1X96NIDNVI)](https://codecov.io/gh/cosmicblack/ooaip)
+
 # ExceptionHandlerFindStrategy
 [![codecov](https://codecov.io/gh/cosmicblack/ooaip/branch/ExceptionHandlerFindStrategy/graph/badge.svg?token=1X96NIDNVI)](https://codecov.io/gh/cosmicblack/ooaip)
 
