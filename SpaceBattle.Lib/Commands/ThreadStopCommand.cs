@@ -2,12 +2,12 @@ namespace SpaceBattle.Lib;
 
 class ThreadStopCommand : ICommand
 {
-    MyThread stoppingThread;
-    public ThreadStopCommand(MyThread stoppingThread) => this.stoppingThread = stoppingThread;
+    ServerThread stoppingThread;
+    public ThreadStopCommand(ServerThread stoppingThread) => this.stoppingThread = stoppingThread;
 
     public void Execute()
     {
-        if (Thread.CurrentThread == stoppingThread)
+        if (Thread.CurrentThread == stoppingThread.thread)
         {
             stoppingThread.Stop();
         }

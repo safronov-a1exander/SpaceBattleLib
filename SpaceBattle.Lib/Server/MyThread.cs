@@ -1,38 +1,45 @@
 namespace SpaceBattle.Lib;
-
-class MyThread
+using Hwdtech;
+public class ServerThread
 {
-    Thread thread;
+    public Thread thread;
 
-    IReciver queue;
+    IReceiver queue;
     bool stop = false;
-    Action strategy;
+    ActionCommand strategy;
 
     internal void Stop() => stop = true;
 
     internal void HandleCommand()
     {
         var cmd = queue.Receive();
+        try
+        {
+            cmd.Execute();
+        }
+        catch (Exception e)
+        {
+            IoC.Resolve<ICommand>("Handler.Exception", e, cmd);
+        }
 
-        cmd.Execute();
     }
-    public MyThread(IReciver queue)
+    public ServerThread(IReceiver queue)
     {
         this.queue = queue;
-        strategy = () =>
+        strategy = new ActionCommand(() =>
         {
             HandleCommand();
-        };
-
-        thread = new Thread(() =>
+        });
+        this.thread = new Thread(() =>
         {
             while (!stop)
-                strategy();
-            
+            {
+                strategy.Execute();
+            }
         });
     }
 
-        internal void UpdateBehaviour(Action newBehaviour)
+    internal void UpdateBehaviour(ActionCommand newBehaviour)
     {
         strategy = newBehaviour;
 

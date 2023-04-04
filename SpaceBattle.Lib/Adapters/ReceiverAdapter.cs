@@ -2,11 +2,11 @@ using System.Collections.Concurrent;
 
 namespace SpaceBattle.Lib;
 
-class RecieverAdapter : IReciver
+class ReceiverAdapter : IReceiver
 {
     BlockingCollection<ICommand> queue;
 
-    public RecieverAdapter(BlockingCollection<ICommand> queue) => this.queue = queue;
+    public ReceiverAdapter(BlockingCollection<ICommand> queue) => this.queue = queue;
 
     public ICommand Receive()
     {

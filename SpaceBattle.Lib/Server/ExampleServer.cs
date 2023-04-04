@@ -4,13 +4,13 @@ using System.Collections.Concurrent;
 class ExampleServer
 {
     BlockingCollection<ICommand> queue;
-    RecieverAdapter reciever;
-    MyThread thread;
+    ReceiverAdapter reciever;
+    ServerThread thread;
     public ExampleServer()
     {
         this.queue = new BlockingCollection<ICommand>(1000);
-        this.reciever = new RecieverAdapter(queue);
-        this.thread = new MyThread(new RecieverAdapter(queue));
+        this.reciever = new ReceiverAdapter(queue);
+        this.thread = new ServerThread(reciever);
     }
     public void Execute()
     {
@@ -19,7 +19,7 @@ class ExampleServer
         //thread.Add(new ThreadStopCommand(thread));
 
         queue.Add(new UpdateBehaviourCommand(thread,
-        () =>
+        new ActionCommand(() =>
         {
             if (reciever.isEmpty())
             {
@@ -29,7 +29,7 @@ class ExampleServer
             {
                 thread.HandleCommand();
             }
-        }
+        })
         ));
     }
 }
