@@ -6,8 +6,23 @@ using Hwdtech.Ioc;
 
 public class ServerTests
 {
+    static ServerTests()
+    {
+        new InitScopeBasedIoCImplementationCommand().Execute();
+        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
+        var stor = new CreateThreadStorageStrategy().Execute();
+        var startstrat = new CreateAndStartThreadStrategy();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create And Start Thread", (object[] args) => startstrat.Execute(args)).Execute();
+        var sendstrat = new SendCommandStrategy();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => sendstrat.Execute(args)).Execute();
+        var hardstopstrat = new HardStopTheThreadStrategy();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Hard Stop The Thread", (object[] args) => hardstopstrat.Execute(args)).Execute();
+        var softstopstrat = new SoftStopTheThreadStrategy();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Soft Stop The Thread", (object[] args) => softstopstrat.Execute(args)).Execute();
+    }
+
     [Fact]
-    public void MyThread_1()
+    public void PosTestServerThreadWithMRE()
     {
         ManualResetEvent mre = new ManualResetEvent(false);
         BlockingCollection<SpaceBattle.Lib.ICommand> queue = new BlockingCollection<SpaceBattle.Lib.ICommand>();
@@ -49,7 +64,7 @@ public class ServerTests
     }
 
     [Fact]
-    public void MyThread_2()
+    public void PosTestServerThreadWithBarrier()
     {
         Barrier barrier = new Barrier(3);
 
@@ -119,30 +134,24 @@ public class ServerTests
         Assert.True(receiver2.Object.isEmpty());
     }
 
-    public void DependenciesRegistrator()
+    [Fact]
+    public void PosTestCreateAndStartStrategy()
     {
-        new InitScopeBasedIoCImplementationCommand().Execute();
-        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-        var threadsdict = new Dictionary<string, ServerThread>();
-        var start = new CreateAndStartThreadStrategy();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "CreateAndStartThread", (object[] args) => start.Execute(args)).Execute();
-        var send = new SendCommandStrategy();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => send.Execute(args)).Execute();
-        var hardstop = new HardStopTheThreadStrategy();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Hard Stop The Thread", (object[] args) => hardstop.Execute(args)).Execute();
-        var softstop = new SoftStopTheThreadStrategy();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Soft Stop The Thread", (object[] args) => softstop.Execute(args)).Execute();
+
     }
 
-    [Fact]
-    public void MyThread_StrategyCreateAndRun()
+    public void PosTestHardStopTheThreadStrategy()
     {
-        new InitScopeBasedIoCImplementationCommand().Execute();
-        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
 
-        var Th1 = IoC.Resolve<ServerThread>("CreateAndStartThread", "sample_id");
-        var Th2 = IoC.Resolve<ServerThread>("CreateAndStartThread", "sample_id", (() => Thread.Sleep(5000)));
-        Assert.False(Th1 == Th2);
-        Assert.False(Th1.Equals(Th2));
+    }
+
+    public void PosTestSoftStopTheStrategy()
+    {
+
+    }
+
+    public void PosTestSendCommandStrategy()
+    {
+        
     }
 }

@@ -1,12 +1,12 @@
 using Hwdtech;
 namespace SpaceBattle.Lib;
 
-public class SendCommandStrategy: IStrategy
+public class SendCommandStrategy : IStrategy
 {
     public object Execute(params object[] args)
     {
-        var threads = IoC.Resolve<IDictionary<string, ServerThread>>("Storage.Thread");
-        
-        return 0;
+        var snd = IoC.Resolve<IDictionary<string, List<(ServerThread, ISender)>>>("Storage.Thread")[(string)args[0]][0].Item2;
+        var cmd = (ICommand)args[1];
+        return new SendCommand(snd, cmd);
     }
 }

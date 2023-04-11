@@ -3,8 +3,7 @@ using Hwdtech;
 public class ServerThread
 {
     public Thread thread;
-
-    IReceiver queue;
+    public IReceiver queue;
     bool stop = false;
     ActionCommand strategy;
 
