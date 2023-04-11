@@ -137,7 +137,7 @@ public class ServerTests
     [Fact]
     public void PosTestCreateAndStartStrategy()
     {
-
+        
     }
 
     public void PosTestHardStopTheThreadStrategy()
@@ -152,6 +152,6 @@ public class ServerTests
 
     public void PosTestSendCommandStrategy()
     {
-        
+
     }
 }

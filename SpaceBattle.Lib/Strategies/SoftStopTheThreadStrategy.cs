@@ -11,7 +11,11 @@ public class SoftStopTheThreadStrategy: IStrategy
         {
             continue;
         }
-        thread.UpdateBehaviour(new ActionCommand((Action)args[1]));
+        if (args.Length > 1)
+        {
+            var action = new ActionCommand((Action)args[1]);
+            thread.UpdateBehaviour(action);
+        }
         tsc.Execute();
         return 0;
     }
