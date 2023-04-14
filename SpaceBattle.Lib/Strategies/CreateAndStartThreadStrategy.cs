@@ -13,8 +13,7 @@ public class CreateAndStartThreadStrategy : IStrategy
         var st = new ServerThread(rec);
         if (args.Length > 1)
         {
-            var action = new ActionCommand((Action)args[1]);
-            st.UpdateBehaviour(action);
+            send.Send(new ActionCommand((Action)args[1]));
         }
         var threads = IoC.Resolve<IDictionary<string, List<(ServerThread, ISender)>>>("Storage.Thread");
         threads.Add(id, new List<(ServerThread, ISender)>{(st, send)});

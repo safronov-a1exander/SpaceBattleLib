@@ -8,12 +8,8 @@ public class HardStopTheThreadStrategy: IStrategy
         var thread = IoC.Resolve<IDictionary<string, List<(ServerThread, ISender)>>>("Storage.Thread")[(string)args[0]][0].Item1;
         if (args.Length > 1)
         {
-            var action = new ActionCommand((Action)args[1]);
-            thread.UpdateBehaviour(action);
+            thread.UpdateBehaviour(new ActionCommand((Action)args[1]));
         }
-        thread.UpdateBehaviour(new ActionCommand((Action)args[1]));
-        var tsc = new ThreadStopCommand(thread);
-        tsc.Execute();
-        return 0;
+        return new ThreadStopCommand(thread);
     }
 }

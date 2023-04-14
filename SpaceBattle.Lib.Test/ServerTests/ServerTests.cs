@@ -10,7 +10,7 @@ public class ServerTests
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-        var stor = new CreateThreadStorageStrategy().Execute();
+        var storage = new CreateThreadStorageStrategy().Execute();
         var startstrat = new CreateAndStartThreadStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create And Start Thread", (object[] args) => startstrat.Execute(args)).Execute();
         var sendstrat = new SendCommandStrategy();
@@ -137,21 +137,28 @@ public class ServerTests
     [Fact]
     public void PosTestCreateAndStartStrategy()
     {
-        
+        var cmd = () => {Thread.Sleep(5000);};
+        IoC.Resolve<Hwdtech.ICommand>("Create And Start Thread", "thread1");
+        //запуск резолва, проверка на то, что словарь непустой и команда в очереди/выполнилась
     }
 
+    [Fact]
     public void PosTestHardStopTheThreadStrategy()
     {
-
+        var cmd = () => {Thread.Sleep(5000);};
+        //запуск резолва, проверка на то, что сервер оставлен (флаг?), проверка очереди
     }
 
+    [Fact]
     public void PosTestSoftStopTheStrategy()
     {
-
+        var cmd = () => {Thread.Sleep(5000);};
+        //запуск резолва, проверка на то, что сервер оставлен (флаг?), проверка очереди
     }
 
+    [Fact]
     public void PosTestSendCommandStrategy()
     {
-
+        //Запуск резолва, проверка очереди
     }
 }
