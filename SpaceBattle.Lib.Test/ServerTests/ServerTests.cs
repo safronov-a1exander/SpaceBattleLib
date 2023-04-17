@@ -137,28 +137,72 @@ public class ServerTests
     [Fact]
     public void PosTestCreateAndStartStrategy()
     {
-        var cmd = () => {Thread.Sleep(5000);};
-        IoC.Resolve<Hwdtech.ICommand>("Create And Start Thread", "thread1");
-        //запуск резолва, проверка на то, что словарь непустой и команда в очереди/выполнилась
+        //Arrange
+        ManualResetEvent mre = new ManualResetEvent(false);
+        var cmd = () =>
+            {
+                mre.Set();
+            };
+        //Act
+        var thread1 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread1", cmd);
+        //Assert
+        Assert.True(IoC.Resolve<IDictionary<string, List<(ServerThread, ISender)>>>("Storage.Thread").ContainsKey("thread1"));
+        Assert.False(thread1.queue.isEmpty());
+        thread1.Execute();
+        mre.WaitOne();
+        Assert.True(thread1.queue.isEmpty());
     }
 
     [Fact]
     public void PosTestHardStopTheThreadStrategy()
     {
-        var cmd = () => {Thread.Sleep(5000);};
-        //запуск резолва, проверка на то, что сервер оставлен (флаг?), проверка очереди
+        //Arrange
+        ManualResetEvent mre = new ManualResetEvent(false);
+        var cmd = () =>
+            {
+                mre.Set();
+            };
+        var thread2 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread2");
+        thread2.Execute();
+        //Act
+        var tsc = IoC.Resolve<SpaceBattle.Lib.ICommand>("Hard Stop The Thread", "thread2", cmd);
+        tsc.Execute();
+        mre.WaitOne();
+        //Assert
+        Assert.True(thread2.stop);
     }
 
     [Fact]
     public void PosTestSoftStopTheStrategy()
     {
-        var cmd = () => {Thread.Sleep(5000);};
-        //запуск резолва, проверка на то, что сервер оставлен (флаг?), проверка очереди
+        //Arrange
+        ManualResetEvent mre = new ManualResetEvent(false);
+        var cmd = () =>
+            {
+                mre.Set();
+            };
+        var thread3 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread3");
+        thread3.Execute();
+        //Act
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd).Execute();
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
+        //Assert
+        mre.WaitOne();
+        Assert.True(thread3.stop);
     }
 
     [Fact]
     public void PosTestSendCommandStrategy()
     {
-        //Запуск резолва, проверка очереди
+        //Arrange
+        ManualResetEvent mre = new ManualResetEvent(false);
+        var thread3 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread3");
+        thread3.Execute();
+        //Act
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => mre.Set())).Execute();
+        //Assert
+        mre.WaitOne();
     }
 }

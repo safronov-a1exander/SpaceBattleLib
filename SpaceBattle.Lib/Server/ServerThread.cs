@@ -4,7 +4,7 @@ public class ServerThread
 {
     public Thread thread;
     public IReceiver queue;
-    bool stop = false;
+    public bool stop {get; private set;} = false;
     ActionCommand strategy;
 
     internal void Stop() => stop = true;

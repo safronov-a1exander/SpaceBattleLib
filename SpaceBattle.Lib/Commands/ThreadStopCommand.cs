@@ -7,13 +7,6 @@ class ThreadStopCommand : ICommand
 
     public void Execute()
     {
-        if (Thread.CurrentThread == stoppingThread.thread)
-        {
-            stoppingThread.Stop();
-        }
-        else
-        {
-            throw new Exception();
-        }
+        stoppingThread.Stop();
     }
 }
