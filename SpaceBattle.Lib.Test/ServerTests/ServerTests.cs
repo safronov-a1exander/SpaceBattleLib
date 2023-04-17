@@ -198,10 +198,10 @@ public class ServerTests
     {
         //Arrange
         ManualResetEvent mre = new ManualResetEvent(false);
-        var thread3 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread3");
-        thread3.Execute();
+        var thread4 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread4");
+        thread4.Execute();
         //Act
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => mre.Set())).Execute();
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread4", new ActionCommand(() => mre.Set())).Execute();
         //Assert
         mre.WaitOne();
     }
