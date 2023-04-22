@@ -10,8 +10,23 @@ public class ServerTests
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-        var storage = new CreateThreadStorageStrategy().Execute();
-        var startstrat = new CreateAndStartThreadStrategy();
+        var threadsdict = new ConcurrentDictionary<string, ServerThread>();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ThreadByID", (object[] args) => threadsdict).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetThreadByID", (object[] args) =>
+            {
+                var dict = IoC.Resolve<ConcurrentDictionary<string, ServerThread>>("Storage.ThreadByID");
+                return dict[(string)args[0]];
+            }
+        ).Execute();
+        var sendersdict = new ConcurrentDictionary<string, ISender>();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ISenderByID", (object[] args) => sendersdict).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetISenderByID", (object[] args) =>
+            {
+                var dict = IoC.Resolve<ConcurrentDictionary<string, ISender>>("Storage.ISenderByID");
+                return dict[(string)args[0]];
+            }
+        ).Execute();
+        var startstrat = new CreateThreadStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create And Start Thread", (object[] args) => startstrat.Execute(args)).Execute();
         var sendstrat = new SendCommandStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => sendstrat.Execute(args)).Execute();
@@ -19,6 +34,7 @@ public class ServerTests
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Hard Stop The Thread", (object[] args) => hardstopstrat.Execute(args)).Execute();
         var softstopstrat = new SoftStopTheThreadStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Soft Stop The Thread", (object[] args) => softstopstrat.Execute(args)).Execute();
+
     }
 
     [Fact]
@@ -135,7 +151,7 @@ public class ServerTests
     }
 
     [Fact]
-    public void PosTestCreateAndStartStrategy()
+    public void PosTestCreateThreadStrategy()
     {
         //Arrange
         ManualResetEvent mre = new ManualResetEvent(false);
@@ -143,14 +159,18 @@ public class ServerTests
             {
                 mre.Set();
             };
+        var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
+        var receiver = new ReceiverAdapter(queue);
+        var sender = new SenderAdapter(queue);
         //Act
-        var thread1 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread1", cmd);
+        var thread1 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread1", sender, receiver, cmd);
         //Assert
-        Assert.True(IoC.Resolve<IDictionary<string, List<(ServerThread, ISender)>>>("Storage.Thread").ContainsKey("thread1"));
-        Assert.False(thread1.queue.isEmpty());
+        Assert.True(IoC.Resolve<ConcurrentDictionary<string, ServerThread>>("Storage.ThreadByID").ContainsKey("thread1"));
+        Assert.True(IoC.Resolve<ConcurrentDictionary<string, ISender>>("Storage.ISenderByID").ContainsKey("thread1"));
+        Assert.False(thread1.IsReceiverEmpty());
         thread1.Execute();
         mre.WaitOne();
-        Assert.True(thread1.queue.isEmpty());
+        Assert.True(thread1.IsReceiverEmpty());
     }
 
     [Fact]
@@ -162,35 +182,45 @@ public class ServerTests
             {
                 mre.Set();
             };
-        var thread2 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread2");
+        var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
+        var receiver = new ReceiverAdapter(queue);
+        var sender = new SenderAdapter(queue);
+        var thread2 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread2", sender, receiver);
         thread2.Execute();
         //Act
         var tsc = IoC.Resolve<SpaceBattle.Lib.ICommand>("Hard Stop The Thread", "thread2", cmd);
         tsc.Execute();
         mre.WaitOne();
         //Assert
-        Assert.True(thread2.stop);
+        Assert.True(thread2.IsThreadStopped());
     }
 
     [Fact]
     public void PosTestSoftStopTheStrategy()
     {
         //Arrange
-        ManualResetEvent mre = new ManualResetEvent(false);
-        var cmd = () =>
+        ManualResetEvent mre1 = new ManualResetEvent(false);
+        ManualResetEvent mre2 = new ManualResetEvent(false);
+        var cmd1 = () =>
             {
-                mre.Set();
+                mre1.Set();
             };
-        var thread3 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread3");
-        thread3.Execute();
+        var cmd2 = () =>
+            {
+                mre2.Set();
+            };
+        var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
+        var receiver = new ReceiverAdapter(queue);
+        var sender = new SenderAdapter(queue);
         //Act
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd).Execute();
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread3", new ActionCommand(() => Thread.Sleep(10000))).Execute();
+        var thread3 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread3", sender, receiver);
+        sender.Send(new ActionCommand(cmd1));
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd2);
+        thread3.Execute();
         //Assert
-        mre.WaitOne();
-        Assert.True(thread3.stop);
+        mre1.WaitOne();
+        mre2.WaitOne();
+        Assert.True(thread3.IsThreadStopped());
     }
 
     [Fact]
@@ -198,12 +228,15 @@ public class ServerTests
     {
         //Arrange
         ManualResetEvent mre = new ManualResetEvent(false);
-        var thread4 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread4");
+        var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
+        var receiver = new ReceiverAdapter(queue);
+        var sender = new SenderAdapter(queue);
+        var thread4 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread4", sender, receiver);
         thread4.Execute();
         //Act
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread4", new ActionCommand(() => mre.Set())).Execute();
         //Assert
         mre.WaitOne();
     }
-    
+
 }

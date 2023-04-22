@@ -1,6 +1,6 @@
 namespace SpaceBattle.Lib;
 
-public class SendCommand: ICommand
+public class SendCommand : ICommand
 {
     ISender sender;
     ICommand command;

@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 
 namespace SpaceBattle.Lib;
 
-class ReceiverAdapter : IReceiver
+public class ReceiverAdapter : IReceiver
 {
     BlockingCollection<ICommand> queue;
 

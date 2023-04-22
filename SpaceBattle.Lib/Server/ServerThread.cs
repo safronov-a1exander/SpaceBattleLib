@@ -2,9 +2,9 @@ namespace SpaceBattle.Lib;
 using Hwdtech;
 public class ServerThread
 {
-    public Thread thread;
-    public IReceiver queue;
-    public bool stop {get; private set;} = false;
+    Thread thread;
+    IReceiver queue;
+    bool stop = false;
     ActionCommand strategy;
 
     internal void Stop() => stop = true;
@@ -46,5 +46,13 @@ public class ServerThread
     public void Execute()
     {
         thread.Start();
+    }
+    public bool IsReceiverEmpty()
+    {
+        return queue.isEmpty();
+    }
+    public bool IsThreadStopped()
+    {
+        return stop;
     }
 }
