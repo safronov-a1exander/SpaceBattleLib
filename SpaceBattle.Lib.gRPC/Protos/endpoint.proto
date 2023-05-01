@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "SpaceBattle.Lib.gRPC";
+
+package endpoint;
+
+// The endpoint service definition.
+service Endpoint {
+  // Sends a command to server
+  rpc MessageReceiver (CommandRequest) returns (CommandReply);
+}
+
+// The request message containing type of the action, command and args.
+message CommandRequest {
+  // required parameters
+  string type = 1;
+  string gid = 2;
+  // optional parameters
+  map<string, int32> args = 3; 
+}
+
+// The response message containing the response code.
+message CommandReply {
+  int32 statuscode = 1;
+}
