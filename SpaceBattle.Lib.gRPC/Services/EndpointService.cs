@@ -1,5 +1,5 @@
 using Grpc.Core;
-using SpaceBattle.Lib.gRPC;
+using Hwdtech;
 
 namespace SpaceBattle.Lib.gRPC.Services;
 
@@ -13,6 +13,12 @@ public class EndpointService : Endpoint.EndpointBase
 
     public override Task<CommandReply> MessageReceiver(CommandRequest request, ServerCallContext context)
     {
+        string command = request.Command;
+        string gid = request.Gid;
+
+        var args = request.Args.Values.ToArray<string>();
+
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", gid, IoC.Resolve<SpaceBattle.Lib.ICommand>("Commands.AutoCreate.ByName", command, args)).Execute();
         return Task.FromResult(new CommandReply { Statuscode = 204 });
     }
 }

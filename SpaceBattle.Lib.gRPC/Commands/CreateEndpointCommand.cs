@@ -1,15 +1,11 @@
 using SpaceBattle.Lib.gRPC.Services;
 namespace SpaceBattle.Lib.gRPC;
-public class MakeEndpointCommand : ICommand
+public class CreateEndpointCommand : ICommand
 {
-    string[] EndpointArgs;
-    public MakeEndpointCommand(object[] args)
-    {
-        this.EndpointArgs = (string[])args[0];
-    }
+    public CreateEndpointCommand(){}
     public void Execute()
     {
-        var builder = WebApplication.CreateBuilder(EndpointArgs);
+        var builder = WebApplication.CreateBuilder();
         // Add services to the container.
         builder.Services.AddGrpc();
 

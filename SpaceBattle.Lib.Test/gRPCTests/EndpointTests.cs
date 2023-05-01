@@ -3,6 +3,10 @@ using System.Collections.Concurrent;
 using Moq;
 using Hwdtech;
 using Hwdtech.Ioc;
+using SpaceBattle.Lib.gRPC;
+using SpaceBattle.Lib.gRPC.Services;
+using Microsoft.Extensions.Logging;
+using Grpc.Core;
 
 public class EndpointTests
 {
@@ -27,7 +31,7 @@ public class EndpointTests
             }
         ).Execute();
         var startstrat = new CreateThreadStrategy();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create And Start Thread", (object[] args) => startstrat.Execute(args)).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create Thread", (object[] args) => startstrat.Execute(args)).Execute();
         var sendstrat = new SendCommandStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => sendstrat.Execute(args)).Execute();
     }
@@ -36,45 +40,27 @@ public class EndpointTests
     public void PosTestWithOptionals()
     {
         //Arrange
-        ManualResetEvent mre = new ManualResetEvent(false);
-        var cmd = () =>
-            {
-                mre.Set();
-            };
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
-        var thread1 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread1", sender, receiver, cmd);
-        thread1.Execute();
-        //Act
-        
-        //Assert
-        Assert.True(IoC.Resolve<ConcurrentDictionary<string, ServerThread>>("Storage.ThreadByID").ContainsKey("thread1"));
-        Assert.True(IoC.Resolve<ConcurrentDictionary<string, ISender>>("Storage.ISenderByID").ContainsKey("thread1"));
-        Assert.False(thread1.IsReceiverEmpty());
-        mre.WaitOne();
-        Assert.True(thread1.IsReceiverEmpty());
-    }
-
-    [Fact]
-    public void PosTestWithoutOptionals()
-    {
-        //Arrange
-        ManualResetEvent mre = new ManualResetEvent(false);
-        var cmd = () =>
+        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver);
+        var cestrat = new CreateEndpointStrategy();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create Endpoint", (object[] args) => cestrat.Execute(args)).Execute();
+        var request = new CommandRequest{Command = "take on me",  Gid = "thread1"};
+        var d = new Dictionary<string, string>(){{"take me on", "i'll be gone"}, {"09", "24"}};
+        request.Args.Add(d);
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Commands.AutoCreate.ByName", (object[] args) =>
             {
-                mre.Set();
-            };
-        var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
-        var receiver = new ReceiverAdapter(queue);
-        var sender = new SenderAdapter(queue);
-        var thread2 = IoC.Resolve<ServerThread>("Create And Start Thread", "thread2", sender, receiver);
-        thread2.Execute();
+                var cmd = new Mock<SpaceBattle.Lib.ICommand>();
+                Assert.Same(request.Command, args[0]);
+                Assert.Equal(d.Values.ToArray(), args[1]);
+                return cmd.Object;
+            }
+        ).Execute();
         //Act
-        var tsc = IoC.Resolve<SpaceBattle.Lib.ICommand>("Hard Stop The Thread", "thread2", cmd);
-        tsc.Execute();
-        mre.WaitOne();
-        //Assert
-        Assert.True(thread2.IsThreadStopped());
+        var endp = IoC.Resolve<SpaceBattle.Lib.ICommand>("Create Endpoint");
+        var service = new EndpointService(new Mock<ILogger<EndpointService>>().Object);
+        service.MessageReceiver(request, new Mock<ServerCallContext>().Object);
+        Assert.False(receiver.isEmpty());
     }
 }

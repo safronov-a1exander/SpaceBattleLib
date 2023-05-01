@@ -13,10 +13,10 @@ service Endpoint {
 // The request message containing type of the action, command and args.
 message CommandRequest {
   // required parameters
-  string type = 1;
+  string command = 1;
   string gid = 2;
   // optional parameters
-  map<string, int32> args = 3; 
+  map<string, string> args = 3; 
 }
 
 // The response message containing the response code.
