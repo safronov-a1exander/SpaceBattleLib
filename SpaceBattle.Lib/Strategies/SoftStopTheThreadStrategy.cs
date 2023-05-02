@@ -7,7 +7,6 @@ public class SoftStopTheThreadStrategy : IStrategy
     {
         var sender = IoC.Resolve<ISender>("Storage.GetISenderByID", args[0]);
         var hss = IoC.Resolve<ICommand>("Hard Stop The Thread", args);
-        sender.Send(hss);
-        return hss;
+        return new ActionCommand(() => sender.Send(hss));
     }
 }
