@@ -28,7 +28,8 @@ public class GameCommand : ICommand
             }
             catch (Exception e)
             {
-                IoC.Resolve<ICommand>("Handler.Exception", e, cmd!);
+                IoC.Resolve<ICommand>("Handler.Exception", e, cmd!).Execute();
+                throw (Exception)(e.Data["cmd"] = cmd!);
             }
         }
     }
