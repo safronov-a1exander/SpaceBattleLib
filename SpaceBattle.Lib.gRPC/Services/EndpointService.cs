@@ -17,8 +17,8 @@ public class EndpointService : Endpoint.EndpointBase
         string gid = request.Gid;
 
         var args = request.Args.Values.ToArray<string>();
-
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", gid, IoC.Resolve<SpaceBattle.Lib.ICommand>("Commands.AutoCreate.ByName", command, args)).Execute();
+        var thread = IoC.Resolve<string>("Storage.GetThreadByGameID", gid);
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", thread, IoC.Resolve<SpaceBattle.Lib.ICommand>("Commands.AutoCreate.ByName", command, args)).Execute();
         return Task.FromResult(new CommandReply { Statuscode = 204 });
     }
 }

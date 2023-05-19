@@ -34,6 +34,14 @@ public class EndpointTests
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create Thread", (object[] args) => startstrat.Execute(args)).Execute();
         var sendstrat = new SendCommandStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => sendstrat.Execute(args)).Execute();
+        var threadgamedict = new ConcurrentDictionary<string, string>();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ThreadByGameID", (object[] args) => threadgamedict).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetThreadByGameID", (object[] args) =>
+            {
+                var dict = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
+                return dict[(string)args[0]];
+            }
+        ).Execute();
     }
 
     [Fact]
@@ -44,9 +52,11 @@ public class EndpointTests
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
         var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver);
+        var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
+        games.TryAdd("game1", "thread1");
         var cestrat = new CreateEndpointStrategy();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Create Endpoint", (object[] args) => cestrat.Execute(args)).Execute();
-        var request = new CommandRequest{Command = "take on me",  Gid = "thread1"};
+        var request = new CommandRequest{Command = "take on me",  Gid = "game1"};
         var d = new Dictionary<string, string>(){{"take me on", "i'll be gone"}, {"09", "24"}};
         request.Args.Add(d);
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Commands.AutoCreate.ByName", (object[] args) =>
