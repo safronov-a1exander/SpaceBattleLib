@@ -353,3 +353,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# gRPC jsons
+SpaceBattle.Lib.gRPC/*.json
+SpaceBattle.Lib.gRPC/Properties
