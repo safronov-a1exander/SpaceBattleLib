@@ -9,15 +9,15 @@ public class GameCommand : ICommand
     object scope;
     public GameCommand(string id, object scope)
     {
-        this.scope = scope;
+        this.scope = scope; // 1
     }
 
     public void Execute()
     {
         var sw = new Stopwatch();
         IoC.Resolve<ICommand>("Scope.Current.Set", scope).Execute();
-        var quant = IoC.Resolve<TimeSpan>("GetQuant");
-        while(sw.Elapsed < quant)
+        var quant = IoC.Resolve<TimeSpan>("Game.GetQuant");
+        while(sw.Elapsed < quant) // 2
         {
             sw.Start();
             var success = queue.TryDequeue(out var cmd);
@@ -28,9 +28,12 @@ public class GameCommand : ICommand
             }
             catch (Exception e)
             {
-                IoC.Resolve<ICommand>("Handler.Exception", e, cmd!).Execute();
-                throw (Exception)(e.Data["cmd"] = cmd!);
+                sw.Stop();
+                IoC.Resolve<ICommand>("Handler.Exception", e, cmd!).Execute(); // 3
+                throw (Exception)(e.Data["cmd"] = cmd!); // 4
             }
         }
+        var sender = IoC.Resolve<string>("Storage.GetThreadByGameID");
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", sender, this).Execute();
     }
 }
