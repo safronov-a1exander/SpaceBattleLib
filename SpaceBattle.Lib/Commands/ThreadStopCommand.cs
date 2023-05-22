@@ -1,6 +1,6 @@
 namespace SpaceBattle.Lib;
 
-class ThreadStopCommand : ICommand
+public class ThreadStopCommand : ICommand
 {
     ServerThread stoppingThread;
     public ThreadStopCommand(ServerThread stoppingThread) => this.stoppingThread = stoppingThread;
