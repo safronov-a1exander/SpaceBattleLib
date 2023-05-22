@@ -49,7 +49,7 @@ public class GameCommandTests
             }
         ).Execute();
         var ts = new TimeSpan(0, 0, 0, 1);
-        var handler = new ThreadStopCommand();
+        var handler = new ActionCommand(() => {});
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Game.GetQuant", (object[] args) => (object)ts).Execute();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Exception", (object[] props) => handler).Execute();
     }
