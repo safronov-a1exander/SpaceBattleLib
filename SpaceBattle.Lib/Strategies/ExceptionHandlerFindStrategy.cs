@@ -9,7 +9,7 @@ public class ExceptionHandlerFindStrategy : IStrategy
         Type command = (Type)argv[0];
         Type exception = (Type)argv[1];
 
-        var ExceptionHandlers = IoC.Resolve<IDictionary<Type, IDictionary<Type, IStrategy>>>("Handler.Exception");
+        var ExceptionHandlers = IoC.Resolve<IDictionary<Type, IDictionary<Type, IStrategy>>>("Handler.Storage");
 
         return ExceptionHandlers[command][exception];
     }
