@@ -49,9 +49,23 @@ public class GameCommandTests
             }
         ).Execute();
         var ts = new TimeSpan(0, 0, 0, 1);
-        var handler = new ActionCommand(() => {});
+        var handlersdict = new Dictionary<Type, IDictionary<Type, IStrategy>>();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Storage", (object[] props) => handlersdict);
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Game.GetQuant", (object[] args) => (object)ts).Execute();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Exception", (object[] props) => handler).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Exception", (object[] props) => 
+        {
+            var e = (Exception)props[0];
+            var cmd = props[1];
+            try
+            {
+                var strat = new ExceptionHandlerFindStrategy().Execute(e, cmd);
+            }
+            catch(Exception)
+            {
+                throw (Exception)(e.Data["cmd"] = cmd!); // 4
+            }
+        }
+        ).Execute();
     }
     
 

@@ -33,7 +33,6 @@ public class GameCommand : ICommand
             catch (Exception e)
             {
                 IoC.Resolve<ICommand>("Handler.Exception", e, cmd!).Execute(); // 3
-                throw (Exception)(e.Data["cmd"] = cmd!); // 4
             }
         }
         sw.Stop();
