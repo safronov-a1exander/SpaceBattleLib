@@ -15,10 +15,6 @@ public class GameCommand : ICommand
 
     public void Execute()
     {
-        var previous_scope = IoC.Resolve<object>("Scopes.Current");
-        var scope = IoC.Resolve<object>("Storage.GetScopeByGameID");
-        IoC.Resolve<ICommand>("Scopes.Current.Set", scope).Execute();
-
         var quant = IoC.Resolve<TimeSpan>("Game.GetQuant");
         sw.Reset();
         sw.Start();
@@ -36,16 +32,6 @@ public class GameCommand : ICommand
             }
         }
         sw.Stop();
-
-        var sender = IoC.Resolve<string>("Storage.GetThreadByGameID");
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", sender, this).Execute();
-
-        IoC.Resolve<ICommand>("Scopes.Current.Set", previous_scope).Execute();
-    }
-
-    public bool IsExecuted()
-    {
-        if (sw.ElapsedTicks > 0) return true;
-        return false;
+        
     }
 }

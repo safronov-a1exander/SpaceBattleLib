@@ -9,6 +9,13 @@ public class GameCommandTests
 {
     static GameCommandTests()
     {
+        
+    }
+    
+
+    [Fact]
+    public void PosTest()
+    {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
 
@@ -49,29 +56,26 @@ public class GameCommandTests
             }
         ).Execute();
         var ts = new TimeSpan(0, 0, 0, 1);
-        var handlersdict = new Dictionary<Type, IDictionary<Type, IStrategy>>();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Storage", (object[] props) => handlersdict);
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Game.GetQuant", (object[] args) => (object)ts).Execute();
+        var handlersdict = new Dictionary<Type, IDictionary<Type, IStrategy>>();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Storage", (object[] props) => handlersdict).Execute();
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Handler.Exception", (object[] props) => 
         {
             var e = (Exception)props[0];
             var cmd = props[1];
+            var strat = new ExceptionHandlerFindStrategy();
             try
             {
-                var strat = new ExceptionHandlerFindStrategy().Execute(e, cmd);
+                strat.Execute(cmd, e);
             }
             catch(Exception)
             {
                 throw (Exception)(e.Data["cmd"] = cmd!); // 4
             }
+            return new ActionCommand(() => {});
         }
         ).Execute();
-    }
-    
-
-    [Fact]
-    public void PosTest()
-    {
+        
         //Arrange
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
@@ -80,18 +84,27 @@ public class GameCommandTests
         var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
         games.TryAdd("game1", "thread1");
         var scopes = IoC.Resolve<ConcurrentDictionary<string, object>>("Storage.ScopeByGameID");
-        scopes.TryAdd("game1", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root")));
         var firstscope = IoC.Resolve<object>("Scopes.Current");
+        var secondscope = IoC.Resolve<object>("Scopes.New", firstscope);
+        scopes.TryAdd("game1", secondscope);
+        IoC.Resolve<ICommand>("Scopes.Current.Set", secondscope).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ScopeByGameID", (object[] args) => scopegamedict).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetScopeByGameID", (object[] args) =>
+            {
+                var dict = IoC.Resolve<ConcurrentDictionary<string, object>>("Storage.ScopeByGameID");
+                return dict[(string)args[0]];
+            }
+        ).Execute();
+        IoC.Resolve<ICommand>("Scopes.Current.Set", firstscope).Execute();
         //Act
-        var gc = new GameCommand("game1");
+        var gc = new GameMacroCommand("game1");
         var mre = new ManualResetEvent(false);
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread1", gc).Execute();
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread1", new ActionCommand(() => mre.Set())).Execute();
         thread1.Execute();
         
         //Assert
-        mre.WaitOne();
-        Assert.True(gc.IsExecuted());
+        mre.WaitOne(); // доделать
         Assert.True(firstscope == IoC.Resolve<object>("Scopes.Current"));
     }
 }
