@@ -215,7 +215,7 @@ public class ServerTests
         //Act
         var thread3 = IoC.Resolve<ServerThread>("Create Thread", "thread3", sender, receiver);
         sender.Send(new ActionCommand(cmd1));
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd2);
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd2).Execute();
         thread3.Execute();
         //Assert
         mre1.WaitOne();

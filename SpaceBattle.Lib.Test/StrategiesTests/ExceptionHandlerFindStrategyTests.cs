@@ -22,7 +22,7 @@ public class ExceptionHandlerFindStrategyTests
 
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register","Handler.Exception", (object[] props) => Handler.Object.Execute(props)).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("IoC.Register","Handler.Storage", (object[] props) => Handler.Object.Execute(props)).Execute();
 
         var Strat = new ExceptionHandlerFindStrategy();
 
