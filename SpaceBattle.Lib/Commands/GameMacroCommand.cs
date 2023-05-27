@@ -5,18 +5,19 @@ namespace SpaceBattle.Lib;
 public class GameMacroCommand : ICommand
 {
     string id;
+    object scope;
     GameCommand gc;
-    public GameMacroCommand(string id)
+    public GameMacroCommand(string id, object scope)
     {
         this.id = id;
+        this.scope = scope;
         gc = new GameCommand(id);
     }
 
     public void Execute()
     {
         var previous_scope = IoC.Resolve<object>("Scopes.Current");
-        var scope = IoC.Resolve<object>("Storage.GetScopeByGameID", this.id);
-        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", scope).Execute();
+        IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", this.scope).Execute();
 
         this.gc.Execute();
 

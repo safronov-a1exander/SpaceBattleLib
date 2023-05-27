@@ -80,31 +80,39 @@ public class GameCommandTests
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
-        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver);
-        var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
-        games.TryAdd("game1", "thread1");
-        var scopes = IoC.Resolve<ConcurrentDictionary<string, object>>("Storage.ScopeByGameID");
         var firstscope = IoC.Resolve<object>("Scopes.Current");
         var secondscope = IoC.Resolve<object>("Scopes.New", firstscope);
+        var scopes = IoC.Resolve<ConcurrentDictionary<string, object>>("Storage.ScopeByGameID");
         scopes.TryAdd("game1", secondscope);
-        IoC.Resolve<ICommand>("Scopes.Current.Set", secondscope).Execute();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ScopeByGameID", (object[] args) => scopegamedict).Execute();
-        IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetScopeByGameID", (object[] args) =>
+        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver, () => {
+            IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", secondscope).Execute();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.ScopeByGameID", (object[] args) => scopegamedict).Execute();
+            IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Storage.GetScopeByGameID", (object[] args) =>
             {
                 var dict = IoC.Resolve<ConcurrentDictionary<string, object>>("Storage.ScopeByGameID");
                 return dict[(string)args[0]];
             }
-        ).Execute();
-        IoC.Resolve<ICommand>("Scopes.Current.Set", firstscope).Execute();
+            ).Execute();
+            IoC.Resolve<ICommand>("Scopes.Current.Set", firstscope).Execute();
+            });
+        var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
+        games.TryAdd("game1", "thread1");
+        
         //Act
-        var gc = new GameMacroCommand("game1");
+        var gc = new GameMacroCommand("game1", secondscope);
         var mre = new ManualResetEvent(false);
-        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread1", gc).Execute();
+        Stopwatch sw = new Stopwatch();
+        IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread1", new ActionCommand(() => {
+            sw.Start();
+            gc.Execute();
+            sw.Stop();
+        })).Execute();
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread1", new ActionCommand(() => mre.Set())).Execute();
         thread1.Execute();
         
         //Assert
-        mre.WaitOne(); // доделать
+        mre.WaitOne();
         Assert.True(firstscope == IoC.Resolve<object>("Scopes.Current"));
+        Assert.True(sw.Elapsed >= IoC.Resolve<TimeSpan>("Game.GetQuant"));
     }
 }
