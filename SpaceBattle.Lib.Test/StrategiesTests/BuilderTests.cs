@@ -1,24 +1,24 @@
 namespace SpaceBattle.Lib.Test;
 
-public class MakeAdapterStringStrategyTests
+public class BuilderTests
 {
     [Fact]
-    public void PositiveMakeAdapterStringStrategyTest()
+    public void PositiveBuilderTest()
     {
         string header = "namespace SpaceBattle.Lib;public class IMovableAdapter : IMovable";
 
         string openFigBracket = "{";
         string closingFigBracket = "}";
 
-        string targetField = "IUObject target;";
-        string constructor = "public IMovableAdapter(object _target){target = (IUObject) _target;}";
+        string targetField = "Dictionary<string, object> target;";
+        string constructor = "public IMovableAdapter(object _target){target = (Dictionary<string, object>) _target;}";
 
         string speedHeader = "public SpaceBattle.Lib.Vector Speed";
-        string speedGetMethod = "get => (SpaceBattle.Lib.Vector) target.getProperty(\"Speed\");";
+        string speedGetMethod = "get => (SpaceBattle.Lib.Vector) target[\"Speed\"];";
 
         string coordsHeader = "public SpaceBattle.Lib.Vector Coords";
-        string coordsGetMethod = "get => (SpaceBattle.Lib.Vector) target.getProperty(\"Coords\");";
-        string coordsSetMethod = "set => target.setProperty(\"Coords\", value);";
+        string coordsGetMethod = "get => (SpaceBattle.Lib.Vector) target[\"Coords\"];";
+        string coordsSetMethod = "set => target[\"Coords\"] = value;";
 
         string expected = 
         header + 
@@ -38,8 +38,10 @@ public class MakeAdapterStringStrategyTests
 
         Type? IMovableType = Type.GetType("SpaceBattle.Lib.IMovable, SpaceBattle.Lib", true, true);
 
-        string adapterString = (string) new MakeAdapterStringStrategy(IMovableType!).Execute();
+        var adapterString = new Builder();
+        adapterString.Add(IMovableType!);
+        var actual = adapterString.Build();
 
-        Assert.Equal(expected, adapterString);
+        Assert.Equal(expected, actual);
     }
 }
