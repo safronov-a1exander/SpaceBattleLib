@@ -37,5 +37,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with: 
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: SpaceBattle.Lib.Test/coverage/coverage.opencover.xml
+          files: SpaceBattle.Lib.Test/coverage.xml
           
