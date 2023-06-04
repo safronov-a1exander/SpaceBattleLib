@@ -2,7 +2,7 @@ namespace SpaceBattle.Lib;
 
 using System.Collections;
 
-public class PositionGenerator : IEnumerator<Vector>
+public class CoordsGenerator : IEnumerator<Vector>
 {
     int count;
     int initialCount;
@@ -11,7 +11,7 @@ public class PositionGenerator : IEnumerator<Vector>
     Vector value;
     Vector step;
 
-    public PositionGenerator(int count, Vector start, Vector step)
+    public CoordsGenerator(int count, Vector start, Vector step)
     {
         this.initialPos = this.value = start;
         this.initialCount = this.count = count;

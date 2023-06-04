@@ -1,18 +1,18 @@
 namespace SpaceBattle.Lib;
 using Hwdtech;
 
-public class InitPositionCommand : ICommand
+public class InitCoordsCommand : ICommand
 {
     IEnumerable<object> objs;
 
-    public InitPositionCommand(IEnumerable<object> objs)
+    public InitCoordsCommand(IEnumerable<object> objs)
     {
         this.objs = objs;
     }
 
     public void Execute()
     {
-        var Coords = IoC.Resolve<IEnumerator<Vector>>("Game.Generators.Position", objs);
+        var Coords = IoC.Resolve<IEnumerator<Vector>>("Game.Generators.Coords", objs);
 
         foreach (object obj in objs)
         {

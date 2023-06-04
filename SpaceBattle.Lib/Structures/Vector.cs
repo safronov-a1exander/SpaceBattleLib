@@ -153,4 +153,9 @@ public class Vector
     {
         return y < x;
     }
+
+    public static explicit operator Vector(bool v)
+    {
+        throw new NotImplementedException();
+    }
 }

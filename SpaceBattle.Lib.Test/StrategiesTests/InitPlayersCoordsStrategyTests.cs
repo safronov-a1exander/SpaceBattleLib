@@ -4,22 +4,22 @@ namespace SpaceBattle.Lib.Test;
 using Hwdtech;
 using Hwdtech.Ioc;
 
-public class InitPlayersPositionStrategyTests
+public class InitPlayersCoordsStrategyTests
 {
-    public InitPlayersPositionStrategyTests()
+    public InitPlayersCoordsStrategyTests()
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
     }
 
     [Fact]
-    void PosInitPlayersPositionStrategy()
+    void PosInitPlayersCoordsStrategy()
     {
         //Arrange
         var initCommand = new Mock<SpaceBattle.Lib.ICommand>();
         initCommand.Setup(c => c.Execute()).Verifiable();
 
-        IoC.Resolve<ICommand>("IoC.Register", "Game.Objects.Commands.InitPosition", (object[] args) =>
+        IoC.Resolve<ICommand>("IoC.Register", "Game.Objects.Commands.InitCoords", (object[] args) =>
             {
                 var gameObjects = (IEnumerable<object>)args[0];
                 return initCommand.Object;
@@ -28,7 +28,7 @@ public class InitPlayersPositionStrategyTests
 
         var gameObjects = new List<IEnumerable<object>>{new object[]{}, new object[]{}};
 
-        var ipps = new InitPlayersPositionsStrategy();
+        var ipps = new InitPlayersCoordssStrategy();
 
         //Act
         ((SpaceBattle.Lib.ICommand)ipps.Execute(gameObjects)).Execute();

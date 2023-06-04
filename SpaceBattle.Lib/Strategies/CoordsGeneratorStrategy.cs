@@ -1,6 +1,6 @@
 namespace SpaceBattle.Lib;
 
-public class PositionGeneratorStrategy : IStrategy
+public class CoordsGeneratorStrategy : IStrategy
 {
     public object Execute(params object[] args)
     {
@@ -8,6 +8,6 @@ public class PositionGeneratorStrategy : IStrategy
         var start = (Vector)args[1];
         var step = (Vector)args[2];
 
-        return new PositionGenerator(count: iterable.Count(), start: start, step: step);
+        return new CoordsGenerator(count: iterable.Count(), start: start, step: step);
     }
 }

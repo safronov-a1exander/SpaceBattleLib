@@ -4,22 +4,22 @@ using Hwdtech.Ioc;
 using System.Collections;
 using SpaceBattle.Lib;
 
-public class PositionGeneratorTests
+public class CoordsGeneratorTests
 {
-    public PositionGeneratorTests()
+    public CoordsGeneratorTests()
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
     }
 
     [Fact]
-    void PosPositionGeneratorTraverse()
+    void PosCoordsGeneratorTraverse()
     {
         var start = new Vector(0, 0);
         var step = new Vector(1, 2);
         var count = 3;
 
-        var pg = new PositionGenerator(count, start, step);
+        var pg = new CoordsGenerator(count, start, step);
 
         Vector current = start;
 
@@ -34,14 +34,14 @@ public class PositionGeneratorTests
     }
 
     [Fact]
-    void PosPositionGeneratorReset()
+    void PosCoordsGeneratorReset()
     {
         //Arrange
         var start = new Vector(0, 0);
         var step = new Vector(1, 2);
         var count = 1;
 
-        var pg = new PositionGenerator(count, start, step);
+        var pg = new CoordsGenerator(count, start, step);
 
         Vector current = start;
 
@@ -57,28 +57,28 @@ public class PositionGeneratorTests
     }
 
     [Fact]
-    void PosPositionGeneratorDispose()
+    void PosCoordsGeneratorDispose()
     {
         //Arrange
         var start = new Vector(0, 0);
         var step = new Vector(1, 2);
         var count = 1;
 
-        var pg = new PositionGenerator(count, start, step);
+        var pg = new CoordsGenerator(count, start, step);
 
         //Act & Assert
         pg.Dispose();
     }
 
     [Fact]
-    void PosPositionGeneratorEndCheck()
+    void PosCoordsGeneratorEndCheck()
     {
         //Arrange
         var start = new Vector(0, 0);
         var step = new Vector(1, 2);
         var count = 0;
 
-        var pg = new PositionGenerator(count, start, step);
+        var pg = new CoordsGenerator(count, start, step);
 
         //Act & Assert
         Assert.False(pg.MoveNext());

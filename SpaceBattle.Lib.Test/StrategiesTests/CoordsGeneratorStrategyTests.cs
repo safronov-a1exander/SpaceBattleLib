@@ -2,16 +2,16 @@ namespace SpaceBattle.Lib.Test;
 using Hwdtech;
 using Hwdtech.Ioc;
 
-public class PositionGeneratorStrategyTests
+public class CoordsGeneratorStrategyTests
 {
     [Fact]
-    void PosPositionGeneratorStrategy()
+    void PosCoordsGeneratorStrategy()
     {
         //Arrange
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
 
-        var pgs = new PositionGeneratorStrategy();
+        var pgs = new CoordsGeneratorStrategy();
 
         var iterable = Enumerable.Repeat<object>(new object(), 3);
         var start = new Vector(0, 0);
