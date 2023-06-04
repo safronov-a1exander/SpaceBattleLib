@@ -9,6 +9,7 @@ public class MakeEmptyObjectsCommandTests
     [Fact]
     void PosMakeEmptyObjects()
     {
+        //Arrange
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
 
@@ -24,15 +25,16 @@ public class MakeEmptyObjectsCommandTests
             }
         ).Execute();
 
-        IoC.Resolve<ICommand>("IoC.Register", "System.Generator.Uuid", (object[] _) => new UuidGeneratorStrategy().Execute()).Execute();
+        IoC.Resolve<ICommand>("IoC.Register", "System.Generator.Uuid", (object[] _) => Guid.NewGuid().ToString()).Execute();
         IoC.Resolve<ICommand>("IoC.Register", "Game.Objects.Empty", (object[] _) => new object()).Execute();
 
         var quantity = 5;
 
+        //Act
         var meoc = new MakeEmptyObjectsCommand(quantity);
         meoc.Execute();
 
-        // Assertation
+        //Assert
         Assert.Equal(quantity, stor.Count);
     }
 }

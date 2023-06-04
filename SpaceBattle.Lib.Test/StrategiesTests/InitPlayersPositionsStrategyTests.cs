@@ -16,7 +16,6 @@ public class PositionGeneratorStrategyTests
     void PosPositionGeneratorStrategyTests()
     {
         //Arrange
-
         var initCommand = new Mock<SpaceBattle.Lib.ICommand>();
         initCommand.Setup(c => c.Execute()).Verifiable();
 
@@ -31,10 +30,10 @@ public class PositionGeneratorStrategyTests
 
         var ipps = new InitPlayersPositionsStrategy();
 
-        // Act
+        //Act
         ((SpaceBattle.Lib.ICommand)ipps.Execute(gameObjects)).Execute();
 
-        // Assert
+        //Assert
         initCommand.Verify();
     }
 }
