@@ -29,7 +29,7 @@ public class InitFuelCommandTests
                 var obj = (IDictionary<string, object>)argv[0];
                 var fuelable = new Mock<IFuelable>();
                 fuelable.SetupGet(f => f.fuelLevel).Returns(() => (int)obj["Fuel"]);
-                fuelable.SetupSet(f => f.fuelLevel).Callback((int value) => { obj["Fuel"] = value; });
+                fuelable.SetupSet(f => f.fuelLevel = It.IsAny<int>()).Callback((int value) => { obj["Fuel"] = value; });
                 return fuelable.Object;
             }
         ).Execute();

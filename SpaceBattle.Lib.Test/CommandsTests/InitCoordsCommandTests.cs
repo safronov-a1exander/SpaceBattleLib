@@ -30,7 +30,7 @@ public class InitGameObjectsCoordsCommandTests
                 var obj = (IDictionary<string, object>)argv[0];
                 var movable = new Mock<IMovable>();
                 movable.SetupGet(m => m.Coords).Returns(() => (Vector)obj["Coords"]);
-                movable.SetupSet(m => m.Coords).Callback((Vector value) => { obj["Coords"] = value; });
+                movable.SetupSet(m => m.Coords = It.IsAny<Vector>()).Callback((Vector value) => { obj["Coords"] = value; });
                 return movable.Object;
             }
         ).Execute();
