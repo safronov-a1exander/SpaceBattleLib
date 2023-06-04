@@ -3,14 +3,23 @@ using Hwdtech;
 
 public class InitFuelCommand : ICommand
 {
-    IUObject target;
-    public InitFuelCommand(IUObject target)
+    IEnumerable<object> objs;
+
+    public InitFuelCommand(IEnumerable<object> objs)
     {
-        this.target = target;
+        this.objs = objs;
     }
+
     public void Execute()
     {
-       var massOfFuel = IoC.Resolve<int>("RocketInitFuel"); //?
-       target.setProperty("Fuel", massOfFuel);
+        var fuel = IoC.Resolve<IEnumerator<int>>("Game.Generators.Fuel", objs);
+
+        foreach (object obj in objs)
+        {
+            IFuelable fuelable = IoC.Resolve<IFuelable>("Entities.Adapter.IFuelable", obj);
+
+            fuel.MoveNext();
+            fuelable.fuelLevel = fuel.Current;
+        }
     }
 }

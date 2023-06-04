@@ -3,15 +3,23 @@ using Hwdtech;
 
 public class InitPositionCommand : ICommand
 {
-    IUObject target;
-    public InitPositionCommand(IUObject target)
+    IEnumerable<object> objs;
+
+    public InitPositionCommand(IEnumerable<object> objs)
     {
-        this.target = target;
+        this.objs = objs;
     }
+
     public void Execute()
     {
-       var coords = IoC.Resolve<Vector>("RocketInitPositionIter"); //?
-       target.setProperty("Coords", coords);
-       //IoC.Resolve<ICommand>("IUObject.SetProperty", target, "Coords", coords).Execute();
+        var Coords = IoC.Resolve<IEnumerator<Vector>>("Game.Generators.Position", objs);
+
+        foreach (object obj in objs)
+        {
+            IMovable movable = IoC.Resolve<IMovable>("Entities.Adapter.IMovable", obj);
+
+            Coords.MoveNext();
+            movable.Coords = Coords.Current;
+        }
     }
 }
