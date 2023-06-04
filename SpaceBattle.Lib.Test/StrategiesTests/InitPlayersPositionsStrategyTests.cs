@@ -4,16 +4,16 @@ namespace SpaceBattle.Lib.Test;
 using Hwdtech;
 using Hwdtech.Ioc;
 
-public class PositionGeneratorStrategyTests
+public class InitPlayersPositionStrategyTests
 {
-    public PositionGeneratorStrategyTests()
+    public InitPlayersPositionStrategyTests()
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
         IoC.Resolve<Hwdtech.ICommand>("Scopes.Current.Set", IoC.Resolve<object>("Scopes.New", IoC.Resolve<object>("Scopes.Root"))).Execute();
     }
 
     [Fact]
-    void PosPositionGeneratorStrategyTests()
+    void PosInitPlayersPositionStrategy()
     {
         //Arrange
         var initCommand = new Mock<SpaceBattle.Lib.ICommand>();
