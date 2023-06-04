@@ -14,7 +14,7 @@ public class MakeEmptyObjectsCommand : ICommand
         foreach (int _ in Enumerable.Range(0, quantity))
         {
             IoC.Resolve<ICommand>(
-                "Game.Objects.Registry.Add",
+                "Game.Objects.Storage.Add",
                 IoC.Resolve<string>("System.Generator.Uuid"),
                 IoC.Resolve<object>("Game.Objects.Empty")
             ).Execute();

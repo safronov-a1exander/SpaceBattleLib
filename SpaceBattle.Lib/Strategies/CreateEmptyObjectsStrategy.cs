@@ -1,6 +1,6 @@
 namespace SpaceBattle.Lib;
 
-public class EmptyObjectCreateStrategy : IStrategy
+public class CreateEmptyObjectStrategy : IStrategy
 {
     public object Execute(params object[] args)
     {
