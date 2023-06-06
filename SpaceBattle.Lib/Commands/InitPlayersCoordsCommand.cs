@@ -1,11 +1,11 @@
 namespace SpaceBattle.Lib;
 using Hwdtech;
 
-public class InitPlayersCoordssCommand : ICommand
+public class InitPlayersCoordsCommand : ICommand
 {
     List<IEnumerable<object>> spaceshipsList;
 
-    public InitPlayersCoordssCommand(List<IEnumerable<object>> spaceshipsList)
+    public InitPlayersCoordsCommand(List<IEnumerable<object>> spaceshipsList)
     {
         this.spaceshipsList = spaceshipsList;
     }

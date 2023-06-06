@@ -28,7 +28,7 @@ public class InitPlayersCoordsStrategyTests
 
         var gameObjects = new List<IEnumerable<object>>{new object[]{}, new object[]{}};
 
-        var ipps = new InitPlayersCoordssStrategy();
+        var ipps = new InitPlayersCoordsStrategy();
 
         //Act
         ((SpaceBattle.Lib.ICommand)ipps.Execute(gameObjects)).Execute();
