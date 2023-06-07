@@ -32,9 +32,10 @@ jobs:
       - name: Setup cov env
         run: dotnet tool install --global dotnet-coverage
       - name: Test
-        run: dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+        run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - name: Codecov
         uses: codecov/codecov-action@v3
         with: 
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: SpaceBattle.Lib.Test/coverage.opencover.xml
           
