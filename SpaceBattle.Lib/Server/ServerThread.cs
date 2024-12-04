@@ -4,6 +4,7 @@ public class ServerThread
 {
     Thread thread;
     IReceiver queue;
+    IReceiver externalQueue;
     bool stop = false;
     ActionCommand strategy;
 
@@ -12,9 +13,11 @@ public class ServerThread
     internal void HandleCommand()
     {
         var cmd = queue.Receive();
+        var order = externalQueue.Receive();
         try
         {
             cmd.Execute();
+            order.Execute();
         }
         catch (Exception e)
         {
@@ -22,9 +25,10 @@ public class ServerThread
         }
 
     }
-    public ServerThread(IReceiver queue)
+    public ServerThread(IReceiver queue, IReceiver externalQueue)
     {
         this.queue = queue;
+        this.externalQueue = externalQueue;
         strategy = new ActionCommand(() =>
         {
             HandleCommand();
