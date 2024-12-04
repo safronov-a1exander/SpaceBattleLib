@@ -51,7 +51,12 @@ public class EndpointTests
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
-        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver);
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
+        var externalReceiver = new ReceiverAdapter(externalQueue);
+        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver, externalReceiver);
         var games = IoC.Resolve<ConcurrentDictionary<string, string>>("Storage.ThreadByGameID");
         games.TryAdd("game1", "thread1");
         var cestrat = new CreateEndpointStrategy();

@@ -42,9 +42,16 @@ public class ServerTests
     {
         ManualResetEvent mre = new ManualResetEvent(false);
         BlockingCollection<SpaceBattle.Lib.ICommand> queue = new BlockingCollection<SpaceBattle.Lib.ICommand>();
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
         var receiver = new Mock<IReceiver>();
+        var externalReciever = new Mock<IReceiver>();
         receiver.Setup(r => r.Receive()).Returns(() => queue.Take());
         receiver.Setup(r => r.isEmpty()).Returns(() => queue.Count() == 0);
+        externalReciever.Setup(r => r.Receive()).Returns(() => externalQueue.Take());
+        externalReciever.Setup(r => r.isEmpty()).Returns(() => externalQueue.Count() == 0);
         var sender = new Mock<ISender>();
         sender.Setup(s => s.Send(It.IsAny<SpaceBattle.Lib.ICommand>())).Callback<SpaceBattle.Lib.ICommand>((c) => queue.Add(c));
         Assert.True(receiver.Object.isEmpty());
@@ -71,7 +78,7 @@ public class ServerTests
 
         Assert.False(receiver.Object.isEmpty());
 
-        ServerThread mt = new ServerThread(receiver.Object);
+        ServerThread mt = new ServerThread(receiver.Object, externalReciever.Object);
         mt.Execute();
 
         mre.WaitOne();
@@ -85,10 +92,22 @@ public class ServerTests
         Barrier barrier = new Barrier(3);
 
         BlockingCollection<SpaceBattle.Lib.ICommand> queue1 = new BlockingCollection<SpaceBattle.Lib.ICommand>();
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> queue3 = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
 
         var receiver1 = new Mock<IReceiver>();
         receiver1.Setup(r => r.Receive()).Returns(() => queue1.Take());
         receiver1.Setup(r => r.isEmpty()).Returns(() => queue1.Count() == 0);
+
+        var externalReceiver1 = new Mock<IReceiver>();
+        externalReceiver1.Setup(r => r.Receive()).Returns(() => queue3.Take());
+        externalReceiver1.Setup(r => r.isEmpty()).Returns(() => queue3.Count() == 0);
+
+        var externalReceiver2 = new Mock<IReceiver>();
+        externalReceiver2.Setup(r => r.Receive()).Returns(() => queue3.Take());
+        externalReceiver2.Setup(r => r.isEmpty()).Returns(() => queue3.Count() == 0);
 
         var sender1 = new Mock<ISender>();
         sender1.Setup(s => s.Send(It.IsAny<SpaceBattle.Lib.ICommand>())).Callback<SpaceBattle.Lib.ICommand>((c) => queue1.Add(c));
@@ -138,10 +157,10 @@ public class ServerTests
 
         Assert.False(receiver1.Object.isEmpty());
 
-        ServerThread mt1 = new ServerThread(receiver1.Object);
+        ServerThread mt1 = new ServerThread(receiver1.Object, externalReceiver1.Object);
         mt1.Execute();
 
-        ServerThread mt2 = new ServerThread(receiver2.Object);
+        ServerThread mt2 = new ServerThread(receiver2.Object, externalReceiver2.Object);
         mt2.Execute();
 
         barrier.SignalAndWait();
@@ -162,8 +181,13 @@ public class ServerTests
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
+        var externalReceiver = new ReceiverAdapter(externalQueue);
         //Act
-        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver, cmd);
+        var thread1 = IoC.Resolve<ServerThread>("Create Thread", "thread1", sender, receiver, externalReceiver, cmd);
         //Assert
         Assert.True(IoC.Resolve<ConcurrentDictionary<string, ServerThread>>("Storage.ThreadByID").ContainsKey("thread1"));
         Assert.True(IoC.Resolve<ConcurrentDictionary<string, ISender>>("Storage.ISenderByID").ContainsKey("thread1"));
@@ -185,7 +209,12 @@ public class ServerTests
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
-        var thread2 = IoC.Resolve<ServerThread>("Create Thread", "thread2", sender, receiver);
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
+        var externalReceiver = new ReceiverAdapter(externalQueue);
+        var thread2 = IoC.Resolve<ServerThread>("Create Thread", "thread2", sender, receiver, externalReceiver);
         thread2.Execute();
         //Act
         var tsc = IoC.Resolve<SpaceBattle.Lib.ICommand>("Hard Stop The Thread", "thread2", cmd);
@@ -212,8 +241,13 @@ public class ServerTests
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
         var sender = new SenderAdapter(queue);
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
+        var externalReceiver = new ReceiverAdapter(externalQueue);
         //Act
-        var thread3 = IoC.Resolve<ServerThread>("Create Thread", "thread3", sender, receiver);
+        var thread3 = IoC.Resolve<ServerThread>("Create Thread", "thread3", sender, receiver, externalReceiver);
         sender.Send(new ActionCommand(cmd1));
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Soft Stop The Thread", "thread3", cmd2).Execute();
         thread3.Execute();
@@ -230,8 +264,13 @@ public class ServerTests
         ManualResetEvent mre = new ManualResetEvent(false);
         var queue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100);
         var receiver = new ReceiverAdapter(queue);
+        ActionCommand emptyc = new(() => { });
+        BlockingCollection<SpaceBattle.Lib.ICommand> externalQueue = new BlockingCollection<SpaceBattle.Lib.ICommand>(100)        {
+            emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,emptyc,
+        };
+        var externalReceiver = new ReceiverAdapter(externalQueue);
         var sender = new SenderAdapter(queue);
-        var thread4 = IoC.Resolve<ServerThread>("Create Thread", "thread4", sender, receiver);
+        var thread4 = IoC.Resolve<ServerThread>("Create Thread", "thread4", sender, receiver, externalReceiver);
         thread4.Execute();
         //Act
         IoC.Resolve<SpaceBattle.Lib.ICommand>("Send Command", "thread4", new ActionCommand(() => mre.Set())).Execute();

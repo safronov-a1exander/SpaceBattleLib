@@ -9,10 +9,11 @@ public class CreateThreadStrategy : IStrategy
         var id = (string)args[0];
         var sender = (ISender)args[1];
         var reciever = (IReceiver)args[2];
-        var serverthread = new ServerThread(reciever);
-        if (args.Length > 3)
+        var externalReciever = (IReceiver)args[3];
+        var serverthread = new ServerThread(reciever, externalReciever);
+        if (args.Length > 4)
         {
-            sender.Send(new ActionCommand((Action)args[3]));
+            sender.Send(new ActionCommand((Action)args[4]));
         }
         var threadsdict = IoC.Resolve<ConcurrentDictionary<string, ServerThread>>("Storage.ThreadByID");
         threadsdict.TryAdd(id, serverthread);
