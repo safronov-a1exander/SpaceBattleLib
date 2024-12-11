@@ -3,13 +3,14 @@ using Hwdtech.Ioc;
 using SpaceBattle.Lib;
 using Moq;
 using System.Collections.Concurrent;
+using Google.Protobuf.Collections;
 
 namespace SpaceBattle.Lib.Test;
 
 public class EndpointGameTests
 {
     [Fact]
-    public void MainPositiveRoutingTest()
+    public void PositiveRoutingTest()
     {
         new InitScopeBasedIoCImplementationCommand().Execute();
 
@@ -22,7 +23,7 @@ public class EndpointGameTests
         Dictionary<string, Dictionary<string, IUObject>> GamesObjects = new();
         Dictionary<string, IUObject> game1 = new();
         game1.Add("obj123", obj.Object);
-        GamesObjects.Add("2.1", game1);
+        GamesObjects.Add("1.1", game1);
 
         ISender snd = new SenderAdapter(orderQueue);
         ISender internalSnd = new SenderAdapter(queue);
@@ -35,7 +36,7 @@ public class EndpointGameTests
 
         IRouter router = new Router(routeDict);
 
-        Dictionary<string, object> ValueDictionary = new(){{"objid", "obj123"}, {"thread", "2"}, {"velocity", 1}};
+        Dictionary<string, object> ValueDictionary = new(){{"objid", "obj123"}, {"thread", "1"}, {"velocity", 1}};
 
         Assert.Empty(orderQueue);
 
@@ -61,8 +62,8 @@ public class EndpointGameTests
         IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Send Command", (object[] args) => {
             ICommand cmd = (ICommand) args[0];
             ISender sender = IoC.Resolve<ISender>("GetInternalSenderByThreadId", IoC.Resolve<string>("CurrentGameId"));
-            sender.Send(cmd);
-            return sender;
+            SendCommand sendcommand = new SendCommand(sender, cmd);
+            return sendcommand;
         }).Execute();
 
         Hwdtech.IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "Get Object by ids", (object[] args) =>
@@ -81,8 +82,8 @@ public class EndpointGameTests
             return cmd.Object;
         }).Execute();
 
-        IoC.Resolve<ISender>("Send Order", new ActionCommand(() => {}));
-        router.Route("2.1", "MoveCommand", ValueDictionary);
+        //IoC.Resolve<ISender>("Send Order", new ActionCommand(() => {}));
+        router.Route("1.1", "MoveCommand", ValueDictionary);
 
         Assert.NotEmpty(orderQueue);
 
@@ -92,7 +93,7 @@ public class EndpointGameTests
     }
 
     [Fact]
-    public void RoutingThrowsTest()
+    public void NegativeRoutingThrowsTest()
     {
         Mock<ISender> snd = new();
 
@@ -102,8 +103,20 @@ public class EndpointGameTests
 
         IRouter router = new Router(routeDict);
 
-        Dictionary<string, object> ValueDictionary1 = new(){{"objid", "obj123"}, {"thread", "2"}, {"velocity", 1}};
+        Dictionary<string, object> ValueDictionary1 = new(){{"objid", "obj123"}, {"thread", "1"}, {"velocity", 1}};
 
         Assert.False(router.Route("1", "MoveCommand", ValueDictionary1));
+    }
+
+    [Fact]
+    public void PositiveProtobufMapperStrategyTest()
+    {
+        MapField<string, string> protoMap = new(){
+            ["prop1"] = "propertyValue"
+        };
+
+        Dictionary<string, object> dict = (Dictionary<string, object>) new ProtobufMapperStrategy().Execute(protoMap);
+
+        Assert.True(((string)dict["prop1"]) == protoMap["prop1"]);
     }
 }

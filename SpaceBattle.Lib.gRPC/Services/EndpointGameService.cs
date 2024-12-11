@@ -17,7 +17,7 @@ public class EndpointGameService : Endpoint.EndpointBase
     {
         int status = 500;
 
-        Dictionary<string, object> data = (Dictionary<string, object>)ProtobufMapperStrategy.Execute(request.Args);
+        Dictionary<string, object> data = (Dictionary<string, object>) new ProtobufMapperStrategy().Execute(request.Args);
 
         string gameId = request.Gid;
         string command = request.Command;

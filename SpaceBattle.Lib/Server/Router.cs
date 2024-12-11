@@ -11,7 +11,7 @@ public class Router : IRouter{
 
     public bool Route(string id, string command, Dictionary<string, object> payload){
         try{
-            routeDict[id].Send(new DeserializeSendCommand(id, command, payload));
+            routeDict[id.Split('.')[0]].Send(new DeserializeSendCommand(id, command, payload));
             return true;
         }
         catch {

@@ -1,17 +1,19 @@
 namespace SpaceBattle.Lib;
 using Google.Protobuf.Collections;
 using System.Collections.Generic;
-public class ProtobufMapperStrategy{
+public class ProtobufMapperStrategy: IStrategy{
 
-   public static object Execute(MapField<string, string> protoMap){
+   public object Execute(params object[] args){
 
-    Dictionary<string, object> newDict = new();
+        MapField<string, string> protoMap = (MapField<string, string>)args[0];
 
-    foreach(string key in protoMap.Keys)
-    {
-        newDict[key] = (object) protoMap[key];
-    }
+        Dictionary<string, object> newDict = new();
 
-    return newDict;
+        foreach(string key in protoMap.Keys)
+        {
+            newDict[key] = (object) protoMap[key];
+        }
+
+        return newDict;
    }
 }

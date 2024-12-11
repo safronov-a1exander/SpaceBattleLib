@@ -6,7 +6,8 @@ class SpaceBattleGrpcApp
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddSingleton(new EndpointGameService((IRouter) ((new CreateEndpointGameStrategy()).Execute(2))));
+        var router = (IRouter) new CreateEndpointGameStrategy().Execute(2);
+        builder.Services.AddSingleton(new EndpointGameService(router));
         builder.Services.AddGrpc();
         var app = builder.Build();
         app.MapGrpcService<EndpointGameService>();
