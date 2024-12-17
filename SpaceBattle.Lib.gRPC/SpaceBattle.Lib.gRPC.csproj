@@ -9,17 +9,19 @@
   <ItemGroup>
     <Protobuf Include="Protos\endpoint.proto" GrpcServices="Server" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="Hwdtech.Core" Version="1.0.0" />
     <PackageReference Include="Hwdtech.IoC" Version="1.0.0" />
     <PackageReference Include="Hwdtech.Ioc.ScopeBasedIoCImplementation" Version="1.0.0" />
     <PackageReference Include="Hwdtech.Ioc.SingleThreadScope" Version="1.0.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SpaceBattle.Lib\SpaceBattle.Lib.csproj" />
+    <ProjectReference Include="..\SpaceBattle.Lib.gRPCClient\SpaceBattle.Lib.gRPCClient.csproj" />
   </ItemGroup>
 
 </Project>
