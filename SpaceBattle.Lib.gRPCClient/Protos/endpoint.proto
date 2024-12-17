@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option csharp_namespace = "SpaceBattle.Lib.gRPCClient";
+
+package endpoint;
+
+// The endpoint service definition.
+service Endpoint {
+  // Sends a command to a server
+  rpc MessageReceiver (CommandRequest) returns (CommandReply);
+  // Migrate a game to a server
+  rpc MigrateGame (gameStatus) returns (newGameStatus);
+  // Upload a game on a server
+  rpc UploadGame (serializedGameMessage) returns (uploadStatus);
+}
+
+message serializedGameMessage{
+  string serializedGame = 1;
+}
+
+message gameStatus{
+  string gameId = 1;
+  string newServerId = 2;
+}
+
+message uploadStatus{
+  string uploadStatus = 1;
+}
+
+message newGameStatus{
+  string gameStatus = 1;
+}
+
+// The request message containing type of the action, command and args.
+message CommandRequest {
+  // required parameters
+  string command = 1;
+  string gid = 2;
+  // optional parameters
+  map<string, string> args = 3;
+}
+
+// The response message containing the response code.
+message CommandReply {
+  int32 statuscode = 1;
+}
