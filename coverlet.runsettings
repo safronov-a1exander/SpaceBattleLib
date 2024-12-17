@@ -5,7 +5,7 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura</Format>
-           <ExcludeByFile>**/SpaceBattle.Lib.gRPC/**/*, **/GameCommand.cs, **/HardStopTheThreadStrategy.cs, **/ServerThread.cs,</ExcludeByFile>
+           <ExcludeByFile>**/SpaceBattle.Lib.gRPC/**/*, **/SpaceBattle.Lib.gRPCClient/**/*, **/GameCommand.cs, **/HardStopTheThreadStrategy.cs, **/ServerThread.cs,</ExcludeByFile>
         </Configuration>
       </DataCollector>
     </DataCollectors>
