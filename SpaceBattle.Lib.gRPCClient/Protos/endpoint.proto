@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "SpaceBattle.Lib.gRPC";
+option csharp_namespace = "SpaceBattle.Lib.gRPCClient";
 
 package endpoint;
 
