@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle.Lib.Test", "Spa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle.Lib.gRPC", "SpaceBattle.Lib.gRPC\SpaceBattle.Lib.gRPC.csproj", "{DA8B242F-82DC-4261-9ECE-0C55CFEA014F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "outbox", "outbox\outbox.csproj", "{8C402E97-156F-4B0D-A671-8F52B928FAE9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +30,5 @@ Global
 		{DA8B242F-82DC-4261-9ECE-0C55CFEA014F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA8B242F-82DC-4261-9ECE-0C55CFEA014F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA8B242F-82DC-4261-9ECE-0C55CFEA014F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C402E97-156F-4B0D-A671-8F52B928FAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C402E97-156F-4B0D-A671-8F52B928FAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C402E97-156F-4B0D-A671-8F52B928FAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C402E97-156F-4B0D-A671-8F52B928FAE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
