@@ -37,6 +37,18 @@ public class CreateEndpointGameStrategy : IStrategy
             ServerThread thread = new(rec, orderRec);
             internalDict.Add(i.ToString(), internalSnd);
             routeDict.Add(i.ToString(), snd);
+            snd.Send(new ActionCommand(() =>
+            {
+                new InitiateThreadDependenciesStrategy().Execute(i);
+                IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "GetInternalSenderByThreadId", (object[] args) =>
+                {
+                    return internalDict[(string)args[0]];
+                }).Execute();
+                IoC.Resolve<Hwdtech.ICommand>("IoC.Register", "GetOrderSenderByThreadId", (object[] args) =>
+                {
+                    return routeDict[(string)args[0]];
+                }).Execute();
+            }));
             thread.Execute();
         }
 
